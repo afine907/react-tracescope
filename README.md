@@ -63,6 +63,73 @@ function App() {
 
 For detailed adapter usage, see [ADAPTERS.md](./docs/ADAPTERS.md).
 
+### Integrations - Out-of-Box Framework Support
+
+TraceScope provides **integration packages** for each framework with pre-built adapters, React hooks, and demo data:
+
+```tsx
+// LangChain Integration
+import { 
+  LangChainIntegration,        // All-in-one export
+  useLangChainStream,          // Hook for SSE stream
+  useLangChainTrace,           // Hook for static data
+  createLangChainConfig,       // Config factory
+  langchainAgentEvents,        // Demo data
+} from 'react-tracescope/integrations/langchain';
+
+// AutoGen Integration
+import { 
+  AutoGenIntegration,
+  useAutoGenStream,
+  useAutoGenEvents,
+  createAutoGenConfig,
+  autogenMultiAgentEvents,
+} from 'react-tracescope/integrations/autogen';
+
+// Dify Integration  
+import { 
+  DifyIntegration,
+  useDifyStream,
+  useDifyEvents,
+  createDifyConfig,
+  difyCustomerServiceEvents,
+} from 'react-tracescope/integrations/dify';
+```
+
+**Quick Start with Integration:**
+
+```tsx
+import { TraceScopeProvider, TraceTree } from 'react-tracescope';
+import { useLangChainStream, langchainAgentEvents } from 'react-tracescope/integrations/langchain';
+
+function App() {
+  // Option 1: Use hooks for live data
+  const { events, status } = useLangChainStream({
+    traceUrl: 'http://localhost:8000/trace/stream',
+    autoConnect: true,
+  });
+
+  return (
+    <TraceScopeProvider
+      config={{ adapter: 'custom', autoConnect: false }}
+      initialEvents={events.length > 0 ? events : langchainAgentEvents}
+    >
+      <TraceTree />
+    </TraceScopeProvider>
+  );
+}
+```
+
+**Presets Available:**
+
+| Framework | Preset | Description |
+|-----------|--------|-------------|
+| LangChain | `local` | localhost:8000 |
+| LangChain | `langsmith` | LangSmith cloud |
+| AutoGen | `local` | localhost:8081 |
+| Dify | `cloud` | Dify Cloud API |
+| Dify | `selfHosted` | Self-hosted Dify |
+
 ### Examples - Ready-to-Use Demo Data
 
 TraceScope provides built-in example data for each framework:

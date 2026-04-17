@@ -63,6 +63,73 @@ function App() {
 
 详细适配器用法见 [ADAPTERS.md](./docs/ADAPTERS.md)。
 
+### 集成包 - 开箱即用的框架支持
+
+TraceScope 为每个框架提供了**集成包**，包含预置适配器、React Hooks 和示例数据：
+
+```tsx
+// LangChain 集成
+import { 
+  LangChainIntegration,        // 一站式导出
+  useLangChainStream,          // SSE 流 Hook
+  useLangChainTrace,           // 静态数据 Hook
+  createLangChainConfig,       // 配置工厂
+  langchainAgentEvents,        // 示例数据
+} from 'react-tracescope/integrations/langchain';
+
+// AutoGen 集成
+import { 
+  AutoGenIntegration,
+  useAutoGenStream,
+  useAutoGenEvents,
+  createAutoGenConfig,
+  autogenMultiAgentEvents,
+} from 'react-tracescope/integrations/autogen';
+
+// Dify 集成
+import { 
+  DifyIntegration,
+  useDifyStream,
+  useDifyEvents,
+  createDifyConfig,
+  difyCustomerServiceEvents,
+} from 'react-tracescope/integrations/dify';
+```
+
+**快速开始：**
+
+```tsx
+import { TraceScopeProvider, TraceTree } from 'react-tracescope';
+import { useLangChainStream, langchainAgentEvents } from 'react-tracescope/integrations/langchain';
+
+function App() {
+  // 方式1: 使用 Hook 处理实时数据
+  const { events, status } = useLangChainStream({
+    traceUrl: 'http://localhost:8000/trace/stream',
+    autoConnect: true,
+  });
+
+  return (
+    <TraceScopeProvider
+      config={{ adapter: 'custom', autoConnect: false }}
+      initialEvents={events.length > 0 ? events : langchainAgentEvents}
+    >
+      <TraceTree />
+    </TraceScopeProvider>
+  );
+}
+```
+
+**预设配置：**
+
+| 框架 | 预设 | 说明 |
+|------|------|------|
+| LangChain | `local` | 本地开发 |
+| LangChain | `langsmith` | LangSmith 云服务 |
+| AutoGen | `local` | 本地开发 |
+| Dify | `cloud` | Dify 云 API |
+| Dify | `selfHosted` | 自托管 Dify |
+
 ### 示例 - 开箱即用的 Demo 数据
 
 TraceScope 为每个框架提供了内置示例数据：

@@ -11,6 +11,21 @@
       "require": "./dist/tracescope.cjs.js",
       "types": "./dist/index.d.ts"
     },
+    "./integrations/langchain": {
+      "import": "./dist/integrations/langchain/index.js",
+      "require": "./dist/integrations/langchain/index.cjs.js",
+      "types": "./dist/integrations/langchain/index.d.ts"
+    },
+    "./integrations/autogen": {
+      "import": "./dist/integrations/autogen/index.js",
+      "require": "./dist/integrations/autogen/index.cjs.js",
+      "types": "./dist/integrations/autogen/index.d.ts"
+    },
+    "./integrations/dify": {
+      "import": "./dist/integrations/dify/index.js",
+      "require": "./dist/integrations/dify/index.cjs.js",
+      "types": "./dist/integrations/dify/index.d.ts"
+    },
     "./style.css": "./dist/style.css"
   },
   "files": [
