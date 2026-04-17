@@ -53,13 +53,15 @@ function App() {
 
 ### Supported Frameworks
 
-| Framework | Status | Notes |
-|-----------|--------|-------|
-| LangChain | 🔄 In Dev | v0.1+ |
-| AutoGen | 🔄 In Dev | v0.2+ |
-| Dify | 📋 Planned | Workflow |
-| Coze | 📋 Planned | Bot |
-| Custom JSON | ✅ Supported | Zero config |
+| Framework | Adapter | Status | Notes |
+|-----------|---------|--------|-------|
+| Custom JSON | `custom` | ✅ Stable | Zero config, follows protocol |
+| LangChain | `langchain` | ✅ Stable | v0.1+ |
+| AutoGen | `autogen` | ✅ Stable | v0.2+ |
+| Dify | `dify` | ✅ Stable | Workflow |
+| Coze | `coze` | 📋 Planned | Bot |
+
+For detailed adapter usage, see [ADAPTERS.md](./docs/ADAPTERS.md).
 
 ### Installation
 

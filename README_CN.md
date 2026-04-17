@@ -53,13 +53,15 @@ function App() {
 
 ### 支持的框架
 
-| 框架 | 状态 |
-|------|------|
-| LangChain | 🔄 开发中 |
-| AutoGen | 🔄 开发中 |
-| Dify | 📋 规划 |
-| Coze | 📋 规划 |
-| 自定义 | ✅ 已支持 |
+| 框架 | 适配器 | 状态 |
+|------|--------|------|
+| 自定义 JSON | `custom` | ✅ 稳定 |
+| LangChain | `langchain` | ✅ 稳定 |
+| AutoGen | `autogen` | ✅ 稳定 |
+| Dify | `dify` | ✅ 稳定 |
+| Coze | `coze` | 📋 规划 |
+
+详细适配器用法见 [ADAPTERS.md](./docs/ADAPTERS.md)。
 
 ### 安装
 
