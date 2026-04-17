@@ -1,0 +1,37 @@
+/* StatusIndicator Component Styles */
+.status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 10px;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+}
+
+.status-dot.streaming {
+  background: #3b82f6;
+}
+
+.status-dot.error {
+  background: #ef4444;
+}
+
+.status-text {
+  font-weight: 500;
+}
+
+.status-streaming {
+  color: #3b82f6;
+  background: rgba(59, 130, 246, 0.1);
+}
+
+.status-error {
+  color: #ef4444;
+  background: rgba(239, 68, 68, 0.1);
+}

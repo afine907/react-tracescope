@@ -1,0 +1,128 @@
+/* Node Theme Styles */
+
+/* User Input Node */
+.trace-node-user_input {
+  background: var(--st-user-input-bg);
+  border-left: 3px solid var(--st-user-input-border);
+}
+
+.trace-node-user_input .node-type-badge {
+  background: var(--st-user-input-bg);
+  color: var(--st-user-input-label);
+  border: 1px solid var(--st-user-input-border);
+}
+
+/* Assistant Thought Node */
+.trace-node-assistant_thought {
+  background: var(--st-thought-bg);
+  border-left: 3px solid var(--st-thought-border);
+}
+
+.trace-node-assistant_thought .node-type-badge {
+  background: var(--st-thought-bg);
+  color: var(--st-thought-label);
+  border: 1px solid var(--st-thought-border);
+}
+
+/* Tool Call Node */
+.trace-node-tool_call {
+  background: var(--st-tool-bg);
+  border-left: 3px solid var(--st-tool-border);
+}
+
+.trace-node-tool_call .node-type-badge {
+  background: var(--st-tool-bg);
+  color: var(--st-tool-label);
+  border: 1px solid var(--st-tool-border);
+}
+
+/* Code Execution Node */
+.trace-node-code_execution {
+  background: var(--st-code-bg);
+  border-left: 3px solid var(--st-code-border);
+}
+
+.trace-node-code_execution .node-type-badge {
+  background: var(--st-code-bg);
+  color: var(--st-code-label);
+  border: 1px solid var(--st-code-border);
+}
+
+/* Execution Result Node */
+.trace-node-execution_result {
+  background: var(--st-result-bg);
+  border-left: 3px solid var(--st-result-border);
+}
+
+.trace-node-execution_result .node-type-badge {
+  background: var(--st-result-bg);
+  color: var(--st-result-label);
+  border: 1px solid var(--st-result-border);
+}
+
+/* Final Output Node */
+.trace-node-final_output {
+  background: var(--st-output-bg);
+  border-left: 3px solid var(--st-output-border);
+}
+
+.trace-node-final_output .node-type-badge {
+  background: var(--st-output-bg);
+  color: var(--st-output-label);
+  border: 1px solid var(--st-output-border);
+}
+
+/* Error Node */
+.trace-node-error {
+  background: var(--st-error-bg);
+  border-left: 3px solid var(--st-error-border);
+}
+
+.trace-node-error .node-type-badge {
+  background: var(--st-error-bg);
+  color: var(--st-error-label);
+  border: 1px solid var(--st-error-border);
+}
+
+/* Badge variants */
+.badge-user_input {
+  background: var(--st-user-input-bg);
+  color: var(--st-user-input-label);
+  border-color: var(--st-user-input-border);
+}
+
+.badge-assistant_thought {
+  background: var(--st-thought-bg);
+  color: var(--st-thought-label);
+  border-color: var(--st-thought-border);
+}
+
+.badge-tool_call {
+  background: var(--st-tool-bg);
+  color: var(--st-tool-label);
+  border-color: var(--st-tool-border);
+}
+
+.badge-code_execution {
+  background: var(--st-code-bg);
+  color: var(--st-code-label);
+  border-color: var(--st-code-border);
+}
+
+.badge-execution_result {
+  background: var(--st-result-bg);
+  color: var(--st-result-label);
+  border-color: var(--st-result-border);
+}
+
+.badge-final_output {
+  background: var(--st-output-bg);
+  color: var(--st-output-label);
+  border-color: var(--st-output-border);
+}
+
+.badge-error {
+  background: var(--st-error-bg);
+  color: var(--st-error-label);
+  border-color: var(--st-error-border);
+}

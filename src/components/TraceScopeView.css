@@ -1,0 +1,9 @@
+/* StreamTraceView Component Styles */
+.streamtrace-view {
+  display: flex;
+  flex-direction: column;
+  min-height: 400px;
+  border: 1px solid var(--st-border);
+  border-radius: var(--st-radius);
+  background: var(--st-bg);
+}

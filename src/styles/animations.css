@@ -1,0 +1,122 @@
+/* Animations for status indicators and streaming */
+
+/* Streaming dot animation */
+@keyframes streamingPulse {
+  0%, 100% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+
+.node-content-streaming {
+  display: inline-flex;
+  gap: 4px;
+}
+
+.node-content-streaming .streaming-dot {
+  animation: streamingPulse 1.2s ease-in-out infinite;
+}
+
+.node-content-streaming .streaming-dot:nth-child(1) {
+  animation-delay: 0s;
+}
+
+.node-content-streaming .streaming-dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.node-content-streaming .streaming-dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+/* Status indicator animations */
+@keyframes statusPulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.7;
+  }
+}
+
+.status-dot.streaming {
+  animation: statusPulse 1.5s ease-in-out infinite;
+}
+
+/* Connection status animation */
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.connection-status.state-connecting .connection-icon {
+  animation: rotate 1s linear infinite;
+}
+
+/* Expand/collapse transition */
+.node-expand-btn {
+  transition: transform var(--st-transition);
+}
+
+.node-expand-btn.expanded {
+  transform: rotate(90deg);
+}
+
+.node-expand-btn.collapsed {
+  transform: rotate(0deg);
+}
+
+/* Node hover effect */
+.trace-node {
+  transition: background-color var(--st-transition), box-shadow var(--st-transition);
+}
+
+.trace-node:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Fade in animation for new nodes */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.trace-node {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Content typing effect (optional) */
+.node-content-text {
+  transition: border-color var(--st-transition);
+}
+
+/* Error shake animation */
+@keyframes shake {
+  0%, 100% {
+    transform: translateX(0);
+  }
+  10%, 30%, 50%, 70%, 90% {
+    transform: translateX(-2px);
+  }
+  20%, 40%, 60%, 80% {
+    transform: translateX(2px);
+  }
+}
+
+.status-error {
+  animation: shake 0.5s ease-in-out;
+}
