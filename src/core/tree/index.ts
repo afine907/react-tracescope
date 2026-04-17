@@ -339,6 +339,7 @@ export class TreeBuilder {
 
   /**
    * Get all descendants of a node (children, grandchildren, etc.)
+   * Uses iterative BFS to avoid stack overflow on deep trees
    * @param nodeId - Parent node ID
    * @returns Array of all descendant tree nodes
    */
@@ -349,15 +350,14 @@ export class TreeBuilder {
     }
 
     const descendants: TreeNode[] = [];
+    const queue: TreeNode[] = [...node.children];
 
-    const collectDescendants = (treeNode: TreeNode): void => {
-      for (const child of treeNode.children) {
-        descendants.push(child);
-        collectDescendants(child);
-      }
-    };
+    while (queue.length > 0) {
+      const current = queue.shift()!;
+      descendants.push(current);
+      queue.push(...current.children);
+    }
 
-    collectDescendants(node);
     return descendants;
   }
 

@@ -10,7 +10,6 @@ import type { TreeNode } from '../types/tree';
 import { NodeHeader } from './NodeHeader';
 import { NodeContent } from './NodeContent';
 import { useTreeKeyboard } from '../hooks';
-import './VirtualTree.css';
 
 /* ============================================================================
  * Types
@@ -33,6 +32,20 @@ export interface VTreeSearchProps extends VTreeProps {
   searchPlaceholder?: string;
   showTypeFilter?: boolean;
 }
+
+/* ============================================================================
+ * Node Type Classes
+ * ============================================================================ */
+
+const NODE_TYPE_CLASSES: Record<string, string> = {
+  user_input: 'ts-node-user-input',
+  assistant_thought: 'ts-node-thought',
+  tool_call: 'ts-node-tool',
+  code_execution: 'ts-node-code',
+  execution_result: 'ts-node-result',
+  final_output: 'ts-node-output',
+  error: 'ts-node-error',
+};
 
 /* ============================================================================
  * Memoized Tree Node Row Component
@@ -63,6 +76,7 @@ const TreeNodeRow = memo(({
   }
 
   const nodeType = node.data.nodeType || 'final_output';
+  const nodeClass = NODE_TYPE_CLASSES[nodeType] || NODE_TYPE_CLASSES.final_output;
 
   const handleKeyDown = useTreeKeyboard({
     hasChildren: hasKids,
@@ -71,7 +85,7 @@ const TreeNodeRow = memo(({
 
   return (
     <div
-      className={`virtual-tree-node trace-node-${nodeType}`}
+      className={`ts-node ts-tree-node ${nodeClass}`}
       style={{ paddingLeft: `${depth * indentSize}px` }}
       data-node-id={node.nodeId}
       data-depth={depth}
@@ -108,24 +122,24 @@ function flattenTree(
   filter?: (node: TreeNode) => boolean
 ): Array<{ node: TreeNode; depth: number }> {
   if (!node) return [];
-  
+
   const result: Array<{ node: TreeNode; depth: number }> = [];
-  
+
   if (filter && !filter(node)) {
     return result;
   }
-  
+
   result.push({ node, depth });
-  
+
   const isExpanded = expandedNodes.has(node.nodeId);
   const hasChildren = node.children && node.children.length > 0;
-  
+
   if (isExpanded && hasChildren) {
     for (const child of node.children) {
       result.push(...flattenTree(child, expandedNodes, depth + 1, filter));
     }
   }
-  
+
   return result;
 }
 
@@ -175,21 +189,21 @@ function VirtualTreeComponent({
   return (
     <div
       ref={parentRef}
-      className="virtual-tree-container"
+      className="ts-tree-container"
       style={{ height, width, overflow: 'auto' }}
       role="tree"
       aria-label="Trace tree view"
     >
       <div
-        className="virtual-tree-inner"
-        style={{ height: `${totalHeight}px`, position: 'relative' }}
+        className="relative w-full"
+        style={{ height: `${totalHeight}px` }}
       >
         {virtualizer.getVirtualItems().map((virtualRow) => {
           const { node, depth } = flattenedNodes[virtualRow.index];
           return (
             <div
               key={node.nodeId}
-              className="virtual-tree-row"
+              className="ts-tree-row"
               style={{
                 position: 'absolute',
                 top: 0,
@@ -213,7 +227,7 @@ function VirtualTreeComponent({
           );
         })}
       </div>
-      <div className="virtual-tree-count">
+      <div className="ts-tree-count">
         {flattenedNodes.length} nodes
         {filter && ' (filtered)'}
       </div>
@@ -243,7 +257,7 @@ function VirtualTreeWithSearchComponent({
 }: VTreeSearchProps): JSX.Element {
   const [searchQuery, setSearchQuery] = useState('');
   const [filterType, setFilterType] = useState('');
-  
+
   const filter = useMemo(() => {
     return (node: TreeNode): boolean => {
       if (filterType && node.data.nodeType !== filterType) return false;
@@ -257,22 +271,22 @@ function VirtualTreeWithSearchComponent({
       return true;
     };
   }, [searchQuery, filterType]);
-  
+
   const clearFilters = useCallback(() => {
     setSearchQuery('');
     setFilterType('');
   }, []);
-  
+
   return (
-    <div className="virtual-tree-with-search">
+    <div className="flex flex-col gap-3">
       {(showSearch || showTypeFilter) && (
-        <div className="virtual-tree-toolbar">
+        <div className="ts-toolbar">
           {showSearch && (
-            <div className="toolbar-search">
-              <span className="search-icon" aria-hidden="true">🔍</span>
+            <div className="ts-search">
+              <span className="text-sm opacity-60" aria-hidden="true">🔍</span>
               <input
                 type="text"
-                className="search-input"
+                className="ts-search-input"
                 placeholder={searchPlaceholder}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
@@ -282,7 +296,7 @@ function VirtualTreeWithSearchComponent({
           )}
           {showTypeFilter && (
             <select
-              className="toolbar-select"
+              className="ts-select"
               value={filterType}
               onChange={(e) => setFilterType(e.target.value)}
               aria-label="Filter by node type"
@@ -293,7 +307,7 @@ function VirtualTreeWithSearchComponent({
             </select>
           )}
           {(searchQuery || filterType) ? (
-            <button className="toolbar-clear-btn" onClick={clearFilters} aria-label="Clear filters">
+            <button className="ts-clear-btn" onClick={clearFilters} aria-label="Clear filters">
               ✕ Clear
             </button>
           ) : null}

@@ -1,275 +1,173 @@
 /* TraceScope Demo Styles */
 
+/* Base reset */
 * {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+  @apply box-border m-0 p-0;
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background: #f5f7fa;
-  color: #333;
-  line-height: 1.6;
+  @apply font-sans bg-[#f5f7fa] text-[#333] leading-relaxed;
 }
 
 /* App Container */
 .demo-app {
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  @apply min-h-screen flex flex-col;
 }
 
 /* Header */
 .demo-header {
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: white;
-  padding: 32px 24px;
-  text-align: center;
+  @apply bg-gradient-to-br from-[#667eea] to-[#764ba2] text-white py-8 px-6 text-center;
 }
 
 .demo-header h1 {
-  font-size: 2rem;
-  font-weight: 700;
-  margin-bottom: 8px;
+  @apply text-3xl font-bold mb-2;
 }
 
 .demo-header p {
-  font-size: 1rem;
-  opacity: 0.9;
+  @apply text-base opacity-90;
 }
 
 /* Tabs */
 .demo-tabs {
-  display: flex;
-  background: white;
-  border-bottom: 1px solid #e1e4e8;
-  padding: 0 24px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+  @apply flex bg-white border-b border-[#e1e4e8] px-6 shadow-sm;
 }
 
 .demo-tabs .tab {
-  padding: 16px 24px;
-  border: none;
-  background: none;
-  font-size: 15px;
-  font-weight: 500;
-  color: #666;
-  cursor: pointer;
-  position: relative;
-  transition: color 0.2s;
+  @apply py-4 px-6 border-none bg-transparent text-base font-medium
+         text-[#666] cursor-pointer relative transition-colors duration-200;
 }
 
 .demo-tabs .tab:hover {
-  color: #333;
+  @apply text-[#333];
 }
 
 .demo-tabs .tab.active {
-  color: #667eea;
+  @apply text-[#667eea];
 }
 
 .demo-tabs .tab.active::after {
   content: '';
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: #667eea;
-  border-radius: 3px 3px 0 0;
+  @apply absolute bottom-0 left-0 right-0 h-[3px] bg-[#667eea] rounded-t;
 }
 
 /* Content */
 .demo-content {
-  flex: 1;
-  padding: 24px;
-  max-width: 1400px;
-  margin: 0 auto;
-  width: 100%;
+  @apply flex-1 p-6 max-w-[1400px] mx-auto w-full;
 }
 
 /* Tree View */
 .tree-view {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  @apply bg-white rounded-xl shadow-md overflow-hidden;
 }
 
 .tree-info {
-  display: flex;
-  gap: 24px;
-  padding: 16px 24px;
-  background: #f8f9fa;
-  border-bottom: 1px solid #e1e4e8;
-  font-size: 14px;
-  color: #666;
+  @apply flex gap-6 p-4 px-6 bg-[#f8f9fa] border-b border-[#e1e4e8]
+         text-sm text-[#666];
 }
 
 .tree-info strong {
-  color: #667eea;
+  @apply text-[#667eea];
 }
 
 .tree-container {
-  padding: 16px;
-  min-height: 500px;
+  @apply p-4 min-h-[500px];
 }
 
 /* Chat View */
 .chat-view {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  overflow: hidden;
+  @apply bg-white rounded-xl shadow-md overflow-hidden;
 }
 
 /* Settings View */
 .settings-view {
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 32px;
-  max-width: 600px;
-  margin: 0 auto;
+  @apply bg-white rounded-xl shadow-md p-8 max-w-[600px] mx-auto;
 }
 
 .settings-view h2 {
-  margin-bottom: 24px;
-  font-size: 1.5rem;
-  color: #333;
+  @apply mb-6 text-2xl text-[#333];
 }
 
 .settings-view h3 {
-  margin: 32px 0 16px;
-  font-size: 1.1rem;
-  color: #555;
+  @apply my-8 mb-4 text-lg text-[#555];
 }
 
 .setting-group {
-  margin-bottom: 24px;
+  @apply mb-6;
 }
 
 .setting-group label {
-  display: block;
-  margin-bottom: 8px;
-  font-weight: 500;
-  color: #333;
+  @apply block mb-2 font-medium text-[#333];
 }
 
 .setting-group select {
-  width: 100%;
-  padding: 12px 16px;
-  font-size: 15px;
-  border: 2px solid #e1e4e8;
-  border-radius: 8px;
-  background: white;
-  cursor: pointer;
-  transition: border-color 0.2s;
-}
-
-.setting-group select:focus {
-  outline: none;
-  border-color: #667eea;
+  @apply w-full p-3 px-4 text-base border-2 border-[#e1e4e8] rounded-lg
+         bg-white cursor-pointer transition-colors duration-200
+         focus:outline-none focus:border-[#667eea];
 }
 
 .adapter-info {
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
-  font-size: 14px;
-  color: #666;
+  @apply p-4 bg-[#f8f9fa] rounded-lg text-sm text-[#666];
 }
 
 .adapter-info p {
-  margin-bottom: 4px;
+  @apply mb-1;
 }
 
 .sample-buttons {
-  display: flex;
-  gap: 12px;
-  flex-wrap: wrap;
+  @apply flex gap-3 flex-wrap;
 }
 
 .sample-buttons button {
-  padding: 10px 20px;
-  background: #f0f0f0;
-  border: none;
-  border-radius: 8px;
-  font-size: 14px;
-  cursor: pointer;
-  transition: background 0.2s;
-}
-
-.sample-buttons button:hover {
-  background: #e0e0e0;
+  @apply py-2.5 px-5 bg-[#f0f0f0] border-none rounded-lg text-sm
+         cursor-pointer transition-colors duration-200
+         hover:bg-[#e0e0e0];
 }
 
 .perf-metrics {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-  margin-top: 16px;
+  @apply grid grid-cols-3 gap-4 mt-4;
 }
 
 .metric {
-  text-align: center;
-  padding: 16px;
-  background: #f8f9fa;
-  border-radius: 8px;
+  @apply text-center p-4 bg-[#f8f9fa] rounded-lg;
 }
 
 .metric .label {
-  display: block;
-  font-size: 12px;
-  color: #888;
-  margin-bottom: 4px;
+  @apply block text-xs text-[#888] mb-1;
 }
 
 .metric .value {
-  font-size: 24px;
-  font-weight: 600;
-  color: #667eea;
+  @apply text-2xl font-semibold text-[#667eea];
 }
 
 /* Footer */
 .demo-footer {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  padding: 16px 24px;
-  background: white;
-  border-top: 1px solid #e1e4e8;
-  font-size: 13px;
-  color: #666;
+  @apply flex items-center justify-center gap-4 p-4 px-6
+         bg-white border-t border-[#e1e4e8] text-[13px] text-[#666];
 }
 
 .demo-footer .version {
-  margin-left: auto;
-  color: #aaa;
+  @apply ml-auto text-[#aaa];
 }
 
 /* Responsive */
 @media (max-width: 768px) {
   .demo-header h1 {
-    font-size: 1.5rem;
+    @apply text-xl;
   }
-  
+
   .demo-tabs {
-    padding: 0 12px;
+    @apply px-3;
   }
-  
+
   .demo-tabs .tab {
-    padding: 12px 16px;
-    font-size: 14px;
+    @apply py-3 px-4 text-sm;
   }
-  
+
   .tree-info {
-    flex-wrap: wrap;
-    gap: 12px;
+    @apply flex-wrap gap-3;
   }
-  
+
   .perf-metrics {
-    grid-template-columns: 1fr;
+    @apply grid-cols-1;
   }
 }

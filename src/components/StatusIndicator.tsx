@@ -5,17 +5,9 @@
 
 import React from 'react';
 import type { NodeStatus } from '../types/node';
-import './StatusIndicator.css';
 
 export interface StatusIndicatorProps {
-  /**
-   * Node status to display
-   */
   status?: NodeStatus;
-  
-  /**
-   * Custom class name
-   */
   className?: string;
 }
 
@@ -28,22 +20,22 @@ export function StatusIndicator({ status, className = '' }: StatusIndicatorProps
   if (status === 'complete' || !status) {
     return null;
   }
-  
+
   // Error status
   if (status === 'error') {
     return (
-      <span className={`status-indicator status-error ${className}`}>
-        <span className="status-dot error" />
-        <span className="status-text">Failed</span>
+      <span className={`ts-status ts-status-error ${className}`}>
+        <span className="ts-status-dot error" />
+        <span className="font-medium">Failed</span>
       </span>
     );
   }
-  
+
   // Streaming status (default)
   return (
-    <span className={`status-indicator status-streaming ${className}`}>
-      <span className="status-dot streaming" />
-      <span className="status-text">Streaming</span>
+    <span className={`ts-status ts-status-streaming ${className}`}>
+      <span className="ts-status-dot streaming" />
+      <span className="font-medium">Streaming</span>
     </span>
   );
 }

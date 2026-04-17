@@ -460,11 +460,12 @@ export function createMessageEvent(
  */
 export function validateEvent(event: unknown): event is ProtocolEvent {
   if (!event || typeof event !== 'object') return false;
-  
+
   const e = event as Record<string, unknown>;
-  
+
   return (
     typeof e.id === 'string' &&
+    e.id.length > 0 && // Reject empty string IDs
     ['node', 'edge', 'status', 'message'].includes(e.type as string) &&
     ['start', 'update', 'complete', 'error'].includes(e.action as string) &&
     typeof e.timestamp === 'number'

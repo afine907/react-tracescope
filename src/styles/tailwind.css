@@ -1,0 +1,394 @@
+/* TraceScope Tailwind CSS Entry */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Base layer - Custom properties and reset */
+@layer base {
+  :root {
+    --ts-primary: #6366f1;
+    --ts-primary-dark: #4f46e5;
+    --ts-success: #10b981;
+    --ts-warning: #f59e0b;
+    --ts-error: #ef4444;
+    --ts-bg: #f5f7fa;
+    --ts-border: #e1e4e8;
+    --ts-text: #333;
+    --ts-text-light: #666;
+  }
+
+  * {
+    @apply box-border;
+  }
+}
+
+/* Component layer - Reusable component classes */
+@layer components {
+  /* Base node container */
+  .ts-node {
+    @apply p-3 rounded-md mb-2 transition-all duration-200;
+  }
+
+  .ts-node:hover {
+    @apply shadow-sm;
+  }
+
+  /* Node type variants */
+  .ts-node-user-input {
+    @apply bg-node-user-bg border-l-[3px] border-l-node-user-border;
+  }
+
+  .ts-node-thought {
+    @apply bg-node-thought-bg border-l-[3px] border-l-node-thought-border;
+  }
+
+  .ts-node-tool {
+    @apply bg-node-tool-bg border-l-[3px] border-l-node-tool-border;
+  }
+
+  .ts-node-code {
+    @apply bg-node-code-bg border-l-[3px] border-l-node-code-border;
+  }
+
+  .ts-node-result {
+    @apply bg-node-result-bg border-l-[3px] border-l-node-result-border;
+  }
+
+  .ts-node-output {
+    @apply bg-node-output-bg border-l-[3px] border-l-node-output-border;
+  }
+
+  .ts-node-error {
+    @apply bg-node-error-bg border-l-[3px] border-l-node-error-border;
+  }
+
+  /* Node header */
+  .ts-node-header {
+    @apply flex items-center gap-2 mb-2;
+  }
+
+  /* Expand button */
+  .ts-expand-btn {
+    @apply bg-transparent border-none cursor-pointer p-1 text-xs
+           text-tracescope-text-light transition-transform duration-200
+           hover:text-tracescope-text;
+  }
+
+  .ts-expand-btn.expanded {
+    @apply rotate-90;
+  }
+
+  /* Type badge */
+  .ts-badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border;
+  }
+
+  .ts-badge-user-input {
+    @apply bg-node-user-bg text-node-user-label border-node-user-border;
+  }
+
+  .ts-badge-thought {
+    @apply bg-node-thought-bg text-node-thought-label border-node-thought-border;
+  }
+
+  .ts-badge-tool {
+    @apply bg-node-tool-bg text-node-tool-label border-node-tool-border;
+  }
+
+  .ts-badge-code {
+    @apply bg-node-code-bg text-node-code-label border-node-code-border;
+  }
+
+  .ts-badge-result {
+    @apply bg-node-result-bg text-node-result-label border-node-result-border;
+  }
+
+  .ts-badge-output {
+    @apply bg-node-output-bg text-node-output-label border-node-output-border;
+  }
+
+  .ts-badge-error {
+    @apply bg-node-error-bg text-node-error-label border-node-error-border;
+  }
+
+  /* Status indicator */
+  .ts-status {
+    @apply inline-flex items-center gap-1 text-[11px] px-1.5 py-0.5 rounded-full;
+  }
+
+  .ts-status-streaming {
+    @apply text-blue-500 bg-blue-500/10;
+  }
+
+  .ts-status-error {
+    @apply text-red-500 bg-red-500/10;
+  }
+
+  .ts-status-dot {
+    @apply w-1.5 h-1.5 rounded-full;
+  }
+
+  .ts-status-dot.streaming {
+    @apply bg-blue-500 animate-pulse-slow;
+  }
+
+  .ts-status-dot.error {
+    @apply bg-red-500;
+  }
+
+  /* Content area */
+  .ts-content {
+    @apply pl-6;
+  }
+
+  .ts-content-text {
+    @apply my-0 p-2 px-3 bg-black/[0.03] rounded text-[13px] leading-relaxed
+           whitespace-pre-wrap break-words overflow-x-auto max-h-[300px] overflow-y-auto;
+  }
+
+  .ts-content-code {
+    @apply my-0 p-3 font-mono text-xs bg-[#1e1e1e] rounded overflow-x-auto max-h-[400px] overflow-y-auto;
+  }
+
+  .ts-content-code code {
+    @apply font-inherit text-[#d4d4d4];
+  }
+
+  .ts-content-markdown {
+    @apply p-2 px-3 text-sm leading-relaxed;
+  }
+
+  .ts-content-markdown h1 { @apply my-2 mb-1 font-semibold text-xl; }
+  .ts-content-markdown h2 { @apply my-2 mb-1 font-semibold text-lg; }
+  .ts-content-markdown h3 { @apply my-2 mb-1 font-semibold text-base; }
+  .ts-content-markdown p { @apply my-2; }
+  .ts-content-markdown ul, .ts-content-markdown ol { @apply my-2 pl-6; }
+  .ts-content-markdown li { @apply my-1; }
+  .ts-content-markdown code { @apply px-1.5 py-0.5 bg-black/10 rounded font-mono text-[0.9em]; }
+  .ts-content-markdown pre { @apply my-2 p-3 bg-[#1e1e1e] rounded overflow-x-auto; }
+  .ts-content-markdown pre code { @apply p-0 bg-transparent text-[#d4d4d4]; }
+  .ts-content-markdown blockquote { @apply my-2 pl-3 border-l-[3px] border-tracescope-primary text-tracescope-text-light; }
+  .ts-content-markdown a { @apply text-tracescope-primary no-underline hover:underline; }
+  .ts-content-markdown table { @apply border-collapse w-full my-2; }
+  .ts-content-markdown th, .ts-content-markdown td { @apply px-3 py-1.5 border border-tracescope-border text-left; }
+  .ts-content-markdown th { @apply bg-tracescope-bg-alt font-semibold; }
+
+  /* Streaming dots */
+  .ts-streaming-dots {
+    @apply text-tracescope-text-light text-sm;
+  }
+
+  .ts-streaming-dot {
+    @apply inline-block animate-pulse;
+  }
+
+  /* Error state */
+  .ts-content-error {
+    @apply flex items-center gap-1.5 p-2 px-3 bg-node-error-bg rounded text-node-error-label text-[13px];
+  }
+
+  /* Virtual tree */
+  .ts-tree-container {
+    @apply relative bg-tracescope-bg border border-tracescope-border rounded-md;
+  }
+
+  .ts-tree-row {
+    @apply absolute left-0 right-0;
+  }
+
+  .ts-tree-node {
+    @apply py-2 border-b border-tracescope-border/50 hover:bg-tracescope-bg-alt;
+  }
+
+  .ts-tree-count {
+    @apply sticky bottom-0 py-1.5 px-3 bg-tracescope-bg border-t border-tracescope-border
+           text-xs text-tracescope-text-light text-right;
+  }
+
+  .ts-tree-wrapper {
+    @apply flex flex-col gap-2;
+  }
+
+  /* Toolbar */
+  .ts-toolbar {
+    @apply flex items-center gap-2 flex-wrap p-2 bg-tracescope-bg border border-tracescope-border rounded-md;
+  }
+
+  .ts-search {
+    @apply flex items-center gap-1.5 p-1.5 px-2.5 bg-tracescope-bg-alt border border-tracescope-border rounded;
+  }
+
+  .ts-search-input {
+    @apply border-none outline-none bg-transparent text-[13px] w-44 placeholder:text-tracescope-text-light;
+  }
+
+  .ts-select {
+    @apply p-1.5 px-2.5 bg-tracescope-bg-alt border border-tracescope-border rounded text-[13px] cursor-pointer hover:border-tracescope-primary;
+  }
+
+  .ts-clear-btn {
+    @apply py-1 px-2.5 bg-transparent border border-tracescope-border rounded text-xs cursor-pointer
+           text-tracescope-text-light hover:bg-node-error-bg hover:border-node-error-label hover:text-node-error-label;
+  }
+
+  /* Main view */
+  .ts-view {
+    @apply font-sans text-tracescope-text bg-tracescope-bg rounded-lg overflow-hidden;
+  }
+
+  .ts-header {
+    @apply flex justify-between items-center p-4 bg-tracescope-bg-alt border-b border-tracescope-border;
+  }
+
+  .ts-content-area {
+    @apply p-4 max-h-[600px] overflow-y-auto;
+  }
+
+  .ts-error-display {
+    @apply flex items-center gap-2 p-4 bg-node-error-bg border-b border-node-error-border text-node-error-label;
+  }
+
+  .ts-empty {
+    @apply flex flex-col items-center justify-center p-12 text-tracescope-text-light;
+  }
+
+  .ts-empty-icon {
+    @apply text-5xl mb-4 opacity-50;
+  }
+
+  /* Chat components */
+  .ts-chat-markdown {
+    @apply text-sm;
+  }
+
+  .ts-chat-markdown p { @apply my-2; }
+  .ts-chat-markdown code { @apply bg-black/5 px-1.5 py-0.5 rounded font-mono text-[13px]; }
+  .ts-chat-markdown pre { @apply bg-[#282c34] text-[#abb2bf] p-3 rounded-lg overflow-x-auto my-2; }
+  .ts-chat-markdown pre code { @apply bg-transparent p-0; }
+  .ts-chat-markdown ul, .ts-chat-markdown ol { @apply pl-5 my-2; }
+  .ts-chat-markdown blockquote { @apply border-l-3 border-[#ddd] pl-3 text-[#666] my-2; }
+
+  .ts-chat-bubble-user {
+    @apply bg-[#007aff] text-white rounded-[18px_18px_4px_18px] px-4 py-3 leading-relaxed break-words whitespace-pre-wrap;
+  }
+
+  .ts-chat-bubble-assistant {
+    @apply bg-white rounded-[18px_18px_18px_4px] shadow-sm px-4 py-3 leading-relaxed break-words whitespace-pre-wrap;
+  }
+
+  .ts-chat-bubble-system {
+    @apply bg-[#f0f0f0] text-[#666] text-xs py-2 px-4 rounded;
+  }
+
+  .ts-chat-input {
+    @apply flex-1 p-3 px-4 border border-[#ddd] rounded-[20px] resize-none font-inherit text-sm leading-relaxed max-h-[150px] overflow-y-auto outline-none transition-colors duration-200 focus:border-[#007aff];
+  }
+
+  .ts-chat-send-btn {
+    @apply py-2.5 px-5 bg-[#007aff] text-white border-none rounded-[20px] text-sm font-semibold cursor-pointer transition-colors duration-200 self-end hover:bg-[#0056b3] disabled:bg-[#ccc] disabled:cursor-not-allowed;
+  }
+
+  .ts-chat-thinking {
+    @apply mb-2 text-[13px];
+  }
+
+  .ts-chat-thinking summary {
+    @apply cursor-pointer text-[#666] py-1 px-2 bg-[#f5f5f5] rounded inline-block;
+  }
+
+  .ts-chat-thinking-content {
+    @apply mt-2 p-3 bg-[#fafafa] border-l-[3px] border-[#ffc107] rounded text-[#666] text-[13px] max-h-[200px] overflow-y-auto;
+  }
+}
+
+/* Utilities layer */
+@layer utilities {
+  /* Custom animations */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .animate-fadeIn {
+    animation: fadeIn 0.2s ease-out;
+  }
+
+  .animate-blink {
+    animation: blink 1s infinite;
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+    .ts-streaming-dot {
+      @apply animate-none opacity-50;
+    }
+
+    .ts-status-dot.streaming {
+      @apply animate-none;
+    }
+
+    .animate-fadeIn {
+      animation: none;
+    }
+
+    .animate-blink {
+      animation: none;
+      opacity: 0.7;
+    }
+  }
+
+  /* Dark mode support */
+  @media (prefers-color-scheme: dark) {
+    .ts-view {
+      @apply bg-[#1a1a1a];
+    }
+
+    .ts-content {
+      @apply text-[#e0e0e0];
+    }
+
+    .ts-content-text {
+      @apply bg-white/5 text-[#e0e0e0];
+    }
+
+    .ts-tree-container {
+      @apply bg-[#1a1a1a] border-[#333];
+    }
+
+    .ts-tree-node {
+      @apply border-[#333]/50 hover:bg-white/5;
+    }
+
+    .ts-tree-count {
+      @apply bg-[#1a1a1a] border-[#333] text-[#aaa];
+    }
+
+    .ts-toolbar {
+      @apply bg-[#1a1a1a] border-[#333];
+    }
+
+    .ts-search {
+      @apply bg-[#222] border-[#444];
+    }
+
+    .ts-search-input {
+      @apply text-[#e0e0e0];
+    }
+
+    .ts-select {
+      @apply bg-[#222] border-[#444] text-[#e0e0e0];
+    }
+  }
+}

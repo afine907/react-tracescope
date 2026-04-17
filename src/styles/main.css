@@ -1,7 +1,6 @@
 /* TraceScope Main Styles */
 
-@import './index.css';
-@import './node-themes.css';
+@import './tailwind.css';
 @import './animations.css';
 
 /* 全局样式 */

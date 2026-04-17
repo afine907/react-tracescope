@@ -9,22 +9,10 @@ import { NodeHeader } from './NodeHeader';
 import { NodeContent } from './NodeContent';
 import { useNodeExpanded } from '../adapters/react/hooks';
 import { useTreeKeyboard } from '../hooks';
-import './TraceNode.css';
 
 export interface TraceNodeProps {
-  /**
-   * Tree node data
-   */
   node: TreeNode;
-
-  /**
-   * Current depth level (for indentation)
-   */
   depth: number;
-
-  /**
-   * Custom class name
-   */
   className?: string;
 }
 
@@ -32,6 +20,17 @@ export interface TraceNodeProps {
  * Default indentation per level (32px)
  */
 const INDENT_SIZE = 32;
+
+// Map node types to CSS classes
+const NODE_TYPE_CLASSES: Record<string, string> = {
+  user_input: 'ts-node-user-input',
+  assistant_thought: 'ts-node-thought',
+  tool_call: 'ts-node-tool',
+  code_execution: 'ts-node-code',
+  execution_result: 'ts-node-result',
+  final_output: 'ts-node-output',
+  error: 'ts-node-error',
+};
 
 /**
  * TraceNode Component
@@ -47,11 +46,12 @@ export function TraceNode({ node, depth, className = '' }: TraceNodeProps): JSX.
 
   // Get node type for styling
   const nodeType = node.data.nodeType || 'final_output';
+  const nodeClass = NODE_TYPE_CLASSES[nodeType] || NODE_TYPE_CLASSES.final_output;
 
   // Determine if node has children
   const hasChildren = node.children && node.children.length > 0;
 
-  // Keyboard navigation for tree item
+  // Keyboard navigation
   const handleKeyDown = useTreeKeyboard({
     hasChildren,
     onToggle: toggle,
@@ -59,7 +59,7 @@ export function TraceNode({ node, depth, className = '' }: TraceNodeProps): JSX.
 
   return (
     <div
-      className={`trace-node trace-node-${nodeType} ${className}`}
+      className={`ts-node ${nodeClass} ${className}`}
       style={indentStyle}
       data-node-id={node.nodeId}
       data-depth={depth}
@@ -68,24 +68,24 @@ export function TraceNode({ node, depth, className = '' }: TraceNodeProps): JSX.
       tabIndex={0}
       onKeyDown={handleKeyDown}
     >
-      {/* Node Header (type badge, status, expand button) */}
+      {/* Node Header */}
       <NodeHeader
         node={node.data}
         isExpanded={isExpanded}
         hasChildren={hasChildren}
         onToggleExpand={toggle}
       />
-      
+
       {/* Node Content */}
       <NodeContent
         content={node.data.chunk}
         status={node.data.status}
         nodeType={nodeType}
       />
-      
-      {/* Children (if expanded) */}
+
+      {/* Children */}
       {hasChildren && isExpanded && (
-        <div className="trace-node-children">
+        <div className="mt-2">
           {node.children.map((child) => (
             <TraceNode
               key={child.nodeId}

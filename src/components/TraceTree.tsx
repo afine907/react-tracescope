@@ -6,17 +6,9 @@
 import React from 'react';
 import { useTraceTree } from '../adapters/react/hooks';
 import { TraceNode } from './TraceNode';
-import './TraceTree.css';
 
 export interface TraceTreeProps {
-  /**
-   * Custom class name
-   */
   className?: string;
-  
-  /**
-   * Custom CSS styles
-   */
   style?: React.CSSProperties;
 }
 
@@ -26,26 +18,26 @@ export interface TraceTreeProps {
  */
 export function TraceTree({ className = '', style = {} }: TraceTreeProps): JSX.Element | null {
   const tree = useTraceTree();
-  
+
   if (!tree) {
     return null;
   }
-  
+
   // If it's a virtual root, render its children directly
-  const children = tree.nodeId === '__virtual_root__' 
-    ? tree.children 
+  const children = tree.nodeId === '__virtual_root__'
+    ? tree.children
     : [tree];
-  
+
   return (
     <div
-      className={`trace-tree ${className}`}
+      className={`ts-tree-wrapper ${className}`}
       style={style}
       role="tree"
       aria-label="Trace tree view"
     >
       {children.map((child) => (
-        <TraceNode 
-          key={child.nodeId} 
+        <TraceNode
+          key={child.nodeId}
           node={child}
           depth={child.depth >= 0 ? child.depth : 0}
         />
