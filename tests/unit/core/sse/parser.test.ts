@@ -12,7 +12,7 @@ import {
   isErrorEvent,
 } from '@tracescope/core/sse/parser';
 import type { SSEStreamMessage } from '@tracescope/types/message';
-import { mockConsole } from '../../setup';
+import { mockConsole } from '../../../setup';
 
 // Import mock data
 import {
@@ -27,7 +27,7 @@ import {
   messageEmptyMsgId,
   messageInvalidNodeType,
   messageInvalidStatus,
-} from '../../mocks/sse-data';
+} from '../../../mocks/sse-data';
 
 describe('parseSSEMessage', () => {
   beforeEach(() => {
@@ -337,5 +337,29 @@ describe('isErrorEvent', () => {
     const result = isErrorEvent(completionEventMessage);
 
     expect(result).toBe(false);
+  });
+
+  it('should return true for node_create with error status', () => {
+    const errorMessage: SSEStreamMessage = {
+      msgId: 'msg-err',
+      type: 'node_create',
+      data: { nodeId: 'node-err', chunk: '', status: 'error' },
+      seq: 1,
+      timestamp: Date.now(),
+    };
+
+    expect(isErrorEvent(errorMessage)).toBe(true);
+  });
+
+  it('should return false when status is undefined', () => {
+    const message: SSEStreamMessage = {
+      msgId: 'msg-no-status',
+      type: 'node_append',
+      data: { nodeId: 'node-1', chunk: 'test' },
+      seq: 1,
+      timestamp: Date.now(),
+    };
+
+    expect(isErrorEvent(message)).toBe(false);
   });
 });

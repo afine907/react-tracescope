@@ -1,7 +1,10 @@
 /// <reference types="vitest" />
-import { defineConfig } from 'vite';
+import { defineConfig } from 'vitest/config';
 import react from '@vitejs/plugin-react';
 import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 /**
  * Vitest Configuration for TraceScope
@@ -44,22 +47,15 @@ export default defineConfig({
         'src/**/*.d.ts',
         'src/index.ts',
         'src/**/index.ts',
+        // Examples and demos (not part of library)
+        'src/examples/**',
+        'src/integrations/**/examples/**',
       ],
     },
 
     // Timeout configuration
     testTimeout: 10000,
     hookTimeout: 10000,
-
-    // Parallel execution
-    pool: 'threads',
-    poolOptions: {
-      threads: {
-        singleThread: false,
-        minThreads: 1,
-        maxThreads: 4,
-      },
-    },
   },
 
   // Path aliases (consistent with vite.config.ts)

@@ -338,7 +338,7 @@ export class TreeBuilder {
   }
 
   /**
-   * Get all descendants of a node
+   * Get all descendants of a node (children, grandchildren, etc.)
    * @param nodeId - Parent node ID
    * @returns Array of all descendant tree nodes
    */
@@ -349,13 +349,15 @@ export class TreeBuilder {
     }
 
     const descendants: TreeNode[] = [];
-    
-    this.traverse('DFS', (n) => {
-      if (n.nodeId !== nodeId) {
-        descendants.push(n);
-      }
-    });
 
+    const collectDescendants = (treeNode: TreeNode): void => {
+      for (const child of treeNode.children) {
+        descendants.push(child);
+        collectDescendants(child);
+      }
+    };
+
+    collectDescendants(node);
     return descendants;
   }
 

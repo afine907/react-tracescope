@@ -135,6 +135,11 @@ export function appendContentImmutable(
  * @returns New node map within limit
  */
 export function evictOldestNodes(nodes: NodeMap, maxNodes: number): NodeMap {
+  // Handle edge case: maxNodes <= 0 should return empty map
+  if (maxNodes <= 0) {
+    return {};
+  }
+
   if (Object.keys(nodes).length <= maxNodes) {
     return nodes;
   }
@@ -145,7 +150,7 @@ export function evictOldestNodes(nodes: NodeMap, maxNodes: number): NodeMap {
 
   const nodesToKeep = sortedEntries.slice(-maxNodes);
   const result: NodeMap = {};
-  
+
   nodesToKeep.forEach(([id, node]) => {
     result[id] = node;
   });
