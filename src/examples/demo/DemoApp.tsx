@@ -422,24 +422,39 @@ export default function DemoApp() {
       </header>
       
       {/* Tab 导航 */}
-      <nav className="demo-tabs">
-        <button 
+      <nav className="demo-tabs" role="tablist" aria-label="Demo navigation">
+        <button
+          id="tree-tab"
           className={`tab ${activeTab === 'tree' ? 'active' : ''}`}
           onClick={() => setActiveTab('tree')}
+          role="tab"
+          aria-selected={activeTab === 'tree'}
+          aria-controls="tree-panel"
+          tabIndex={activeTab === 'tree' ? 0 : -1}
         >
-          🌳 Tree View
+          <span aria-hidden="true">🌳</span> Tree View
         </button>
-        <button 
+        <button
+          id="chat-tab"
           className={`tab ${activeTab === 'chat' ? 'active' : ''}`}
           onClick={() => setActiveTab('chat')}
+          role="tab"
+          aria-selected={activeTab === 'chat'}
+          aria-controls="chat-panel"
+          tabIndex={activeTab === 'chat' ? 0 : -1}
         >
-          💬 Chat Mode
+          <span aria-hidden="true">💬</span> Chat Mode
         </button>
-        <button 
+        <button
+          id="settings-tab"
           className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
           onClick={() => setActiveTab('settings')}
+          role="tab"
+          aria-selected={activeTab === 'settings'}
+          aria-controls="settings-panel"
+          tabIndex={activeTab === 'settings' ? 0 : -1}
         >
-          ⚙️ Settings
+          <span aria-hidden="true">⚙️</span> Settings
         </button>
       </nav>
       
@@ -447,7 +462,7 @@ export default function DemoApp() {
       <main className="demo-content">
         {/* Tree View */}
         {activeTab === 'tree' && (
-          <div className="tree-view">
+          <div className="tree-view" role="tabpanel" id="tree-panel" aria-labelledby="tree-tab">
             <div className="tree-info">
               <span>适配器: <strong>{selectedAdapter}</strong></span>
               <span>节点: {stats.totalNodes}</span>
@@ -468,7 +483,7 @@ export default function DemoApp() {
         
         {/* Chat View */}
         {activeTab === 'chat' && (
-          <div className="chat-view">
+          <div className="chat-view" role="tabpanel" id="chat-panel" aria-labelledby="chat-tab">
             <VirtualChat
               messages={chatMessages}
               config={{
@@ -484,14 +499,16 @@ export default function DemoApp() {
         
         {/* Settings */}
         {activeTab === 'settings' && (
-          <div className="settings-view">
+          <div className="settings-view" role="tabpanel" id="settings-panel" aria-labelledby="settings-tab">
             <h2>适配器设置</h2>
-            
+
             <div className="setting-group">
-              <label>选择适配器:</label>
-              <select 
-                value={selectedAdapter} 
+              <label htmlFor="adapter-select">选择适配器:</label>
+              <select
+                id="adapter-select"
+                value={selectedAdapter}
                 onChange={(e) => handleAdapterChange(e.target.value)}
+                aria-label="Select adapter type"
               >
                 <option value="custom">Custom (自定义)</option>
                 <option value="langchain">LangChain</option>
@@ -519,10 +536,10 @@ export default function DemoApp() {
             
             <h3>示例数据</h3>
             <div className="sample-buttons">
-              <button onClick={() => handleAdapterChange('langchain')}>
+              <button type="button" onClick={() => handleAdapterChange('langchain')}>
                 加载 LangChain 示例
               </button>
-              <button onClick={() => handleAdapterChange('autogen')}>
+              <button type="button" onClick={() => handleAdapterChange('autogen')}>
                 加载 AutoGen 示例
               </button>
             </div>

@@ -31,6 +31,23 @@
   background: rgba(59, 130, 246, 0.1);
 }
 
+/* Streaming animation */
+.status-dot.streaming {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .status-dot.streaming {
+    animation: none;
+  }
+}
+
 .status-error {
   color: #ef4444;
   background: rgba(239, 68, 68, 0.1);

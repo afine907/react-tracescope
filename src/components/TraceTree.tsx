@@ -37,7 +37,12 @@ export function TraceTree({ className = '', style = {} }: TraceTreeProps): JSX.E
     : [tree];
   
   return (
-    <div className={`trace-tree ${className}`} style={style}>
+    <div
+      className={`trace-tree ${className}`}
+      style={style}
+      role="tree"
+      aria-label="Trace tree view"
+    >
       {children.map((child) => (
         <TraceNode 
           key={child.nodeId} 

@@ -11,6 +11,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo, memo } from 'react';
 import { useVirtualizer } from '@tanstack/react-virtual';
+import DOMPurify from 'dompurify';
 
 // 类型导入
 import type { ProtocolMessageData, ProtocolMessageRole, ProtocolContentType } from '../protocol/types';
@@ -110,8 +111,22 @@ const MessageBubble: React.FC<MessageBubbleProps> = memo(({
 
     if (contentType === 'markdown') {
       try {
-        const html = marked.marked(content, { async: false }) as string;
-        return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: html }} />;
+        const rawHtml = marked.marked(content, { async: false }) as string;
+        // Sanitize HTML to prevent XSS attacks
+        const sanitizedHtml = DOMPurify.sanitize(rawHtml, {
+          ALLOWED_TAGS: [
+            'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
+            'p', 'br', 'hr',
+            'ul', 'ol', 'li',
+            'blockquote', 'pre', 'code',
+            'a', 'strong', 'em', 'del', 'ins',
+            'table', 'thead', 'tbody', 'tr', 'th', 'td',
+            'img', 'span', 'div'
+          ],
+          ALLOWED_ATTR: ['href', 'src', 'alt', 'title', 'class', 'target', 'rel'],
+          ALLOW_DATA_ATTR: false,
+        });
+        return <div className="markdown-content" dangerouslySetInnerHTML={{ __html: sanitizedHtml }} />;
       } catch {
         return <div className="text-content">{content}</div>;
       }
@@ -232,7 +247,7 @@ const InputBox: React.FC<InputBoxProps> = memo(({
   placeholder = '输入消息...',
 }) => {
   const [input, setInput] = useState('');
-  const textareaRef = useRef<any>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   
   // 自动调整高度
   useEffect(() => {

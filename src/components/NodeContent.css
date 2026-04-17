@@ -148,6 +148,14 @@
   40% { opacity: 1; }
 }
 
+/* Respect user preference for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .node-content-streaming .streaming-dot {
+    animation: none;
+    opacity: 0.5;
+  }
+}
+
 /* Error state */
 .node-content-error {
   display: flex;

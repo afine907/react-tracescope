@@ -8,6 +8,7 @@ import type { TreeNode } from '../types/tree';
 import { NodeHeader } from './NodeHeader';
 import { NodeContent } from './NodeContent';
 import { useNodeExpanded } from '../adapters/react/hooks';
+import { useTreeKeyboard } from '../hooks';
 import './TraceNode.css';
 
 export interface TraceNodeProps {
@@ -15,12 +16,12 @@ export interface TraceNodeProps {
    * Tree node data
    */
   node: TreeNode;
-  
+
   /**
    * Current depth level (for indentation)
    */
   depth: number;
-  
+
   /**
    * Custom class name
    */
@@ -38,24 +39,34 @@ const INDENT_SIZE = 32;
  */
 export function TraceNode({ node, depth, className = '' }: TraceNodeProps): JSX.Element {
   const { isExpanded, toggle } = useNodeExpanded(node.nodeId);
-  
+
   // Calculate indentation
   const indentStyle = useMemo(() => ({
     paddingLeft: `${depth * INDENT_SIZE}px`,
   }), [depth]);
-  
+
   // Get node type for styling
   const nodeType = node.data.nodeType || 'final_output';
-  
+
   // Determine if node has children
   const hasChildren = node.children && node.children.length > 0;
-  
+
+  // Keyboard navigation for tree item
+  const handleKeyDown = useTreeKeyboard({
+    hasChildren,
+    onToggle: toggle,
+  });
+
   return (
-    <div 
+    <div
       className={`trace-node trace-node-${nodeType} ${className}`}
       style={indentStyle}
       data-node-id={node.nodeId}
       data-depth={depth}
+      role="treeitem"
+      aria-expanded={hasChildren ? isExpanded : undefined}
+      tabIndex={0}
+      onKeyDown={handleKeyDown}
     >
       {/* Node Header (type badge, status, expand button) */}
       <NodeHeader

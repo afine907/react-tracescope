@@ -9,6 +9,7 @@ import { useVirtualizer } from '@tanstack/react-virtual';
 import type { TreeNode } from '../types/tree';
 import { NodeHeader } from './NodeHeader';
 import { NodeContent } from './NodeContent';
+import { useTreeKeyboard } from '../hooks';
 import './VirtualTree.css';
 
 /* ============================================================================
@@ -63,12 +64,10 @@ const TreeNodeRow = memo(({
 
   const nodeType = node.data.nodeType || 'final_output';
 
-  const handleKeyDown = useCallback((e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      if (hasKids) toggleNode(node.nodeId);
-    }
-  }, [hasKids, toggleNode, node.nodeId]);
+  const handleKeyDown = useTreeKeyboard({
+    hasChildren: hasKids,
+    onToggle: () => toggleNode(node.nodeId),
+  });
 
   return (
     <div

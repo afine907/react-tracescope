@@ -121,15 +121,17 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
       
       // Default fallback UI
       return (
-        <div className="tracescope-error-boundary">
-          <div className="error-boundary-icon">⚠️</div>
+        <div className="tracescope-error-boundary" role="alert">
+          <div className="error-boundary-icon" aria-hidden="true">⚠️</div>
           <div className="error-boundary-title">Something went wrong</div>
           <div className="error-boundary-message">
             {this.state.error?.message || 'An unexpected error occurred'}
           </div>
-          <button 
+          <button
+            type="button"
             className="error-boundary-reset"
             onClick={this.resetError}
+            aria-label="Try again to recover from error"
           >
             Try Again
           </button>
