@@ -218,7 +218,7 @@ const InputBox: React.FC<InputBoxProps> = memo(({
   placeholder = '输入消息...',
 }) => {
   const [input, setInput] = useState('');
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const textareaRef = useRef<any>(null);
   
   // 自动调整高度
   useEffect(() => {
