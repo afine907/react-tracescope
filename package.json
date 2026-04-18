@@ -43,7 +43,7 @@
     "test:watch": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest run --coverage",
-    "perf-test": "playwright test perf.spec.ts"
+    "perf-test": "playwright test tests/perf.spec.ts"
   },
   "keywords": [
     "trace",
