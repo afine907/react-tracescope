@@ -9,9 +9,9 @@
  * import { DifyIntegration } from 'react-tracescope/integrations/dify';
  */
 
-export { LangChainIntegration, createLangChainConfig, PRESETS as LANCHAIN_PRESETS } from './langchain';
-export { AutoGenIntegration, createAutoGenConfig, PRESETS as AUTOGEN_PRESETS } from './autogen';
-export { DifyIntegration, createDifyConfig, PRESETS as DIFY_PRESETS } from './dify';
+export { LangChainIntegration, createLangChainConfig } from './langchain';
+export { AutoGenIntegration, createAutoGenConfig } from './autogen';
+export { DifyIntegration, createDifyConfig } from './dify';
 
 // Re-export all framework types
 export type { LangChainTrace } from '../examples/frameworks/langchain';
@@ -42,21 +42,3 @@ export {
   transformDifyEvents,
 } from '../examples/frameworks/dify';
 
-// Integration metadata
-export const INTEGRATIONS = {
-  langchain: {
-    name: 'LangChain',
-    adapter: 'langchain',
-    status: 'stable',
-  },
-  autogen: {
-    name: 'AutoGen',
-    adapter: 'autogen',
-    status: 'stable',
-  },
-  dify: {
-    name: 'Dify',
-    adapter: 'dify',
-    status: 'stable',
-  },
-} as const;

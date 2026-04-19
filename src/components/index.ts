@@ -23,7 +23,7 @@ export { ConnectionStatus } from './ConnectionStatus';
 export { Toolbar } from './Toolbar';
 
 // Error handling
-export { ErrorBoundary, ERROR_BOUNDARY_STYLES } from './ErrorBoundary';
+export { ErrorBoundary } from './ErrorBoundary';
 
 // Virtual tree (for 5000+ nodes)
 export { VirtualTree, VirtualTreeWithSearch } from './VirtualTree';

@@ -26,14 +26,6 @@ export function createNode(nodeId: string, partial: Partial<StreamNode> = {}): S
   };
 }
 
-/**
- * Create immutable copy of node map
- * @param nodes - Original node map
- * @returns New node map reference
- */
-export function copyNodeMap(nodes: NodeMap): NodeMap {
-  return { ...nodes };
-}
 
 /**
  * Update a single node immutably
@@ -85,17 +77,6 @@ export function addNodeImmutable(nodes: NodeMap, node: StreamNode): NodeMap {
   };
 }
 
-/**
- * Remove a node immutably
- * @param nodes - Current node map
- * @param nodeId - Node ID to remove
- * @returns New node map without the node
- */
-export function removeNodeImmutable(nodes: NodeMap, nodeId: string): NodeMap {
-  const newNodes = { ...nodes };
-  delete newNodes[nodeId];
-  return newNodes;
-}
 
 /**
  * Append content to a node immutably
@@ -168,35 +149,4 @@ export function filterNodesByAgent(nodes: NodeMap, agentId: string): StreamNode[
   return Object.values(nodes).filter(node => node.agentId === agentId);
 }
 
-/**
- * Get nodes sorted by creation time
- * @param nodes - Current node map
- * @param ascending - Sort direction
- * @returns Sorted array of nodes
- */
-export function getNodesSortedByTime(
-  nodes: NodeMap,
-  ascending = true
-): StreamNode[] {
-  return Object.values(nodes).sort((a, b) => {
-    const timeA = a.createdAt ?? 0;
-    const timeB = b.createdAt ?? 0;
-    return ascending ? timeA - timeB : timeB - timeA;
-  });
-}
 
-/**
- * Deep clone a node (for external consumption)
- * Uses structuredClone for better performance than JSON.parse/stringify
- * @param node - Node to clone
- * @returns Deep clone of the node
- */
-export function deepCloneNode(node: StreamNode): StreamNode {
-  // structuredClone is available in modern environments (Node 17+, modern browsers)
-  // Falls back to JSON method for older environments
-  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-  if (typeof globalThis.structuredClone === 'function') {
-    return globalThis.structuredClone(node);
-  }
-  return JSON.parse(JSON.stringify(node));
-}

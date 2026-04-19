@@ -3,8 +3,7 @@
  * Handles incremental rendering with debouncing and change detection
  */
 
-import type { StreamNode } from '../../types/node';
-import type { RenderOptions, RenderEvent, RenderEventType } from '../../types/config';
+import type { RenderOptions, RenderEvent } from '../../types/config';
 
 /**
  * Renderer class
@@ -190,24 +189,3 @@ export class Renderer {
   }
 }
 
-/**
- * Create Renderer factory function
- */
-export function createRenderer(options?: RenderOptions): Renderer {
-  return new Renderer(options);
-}
-
-/**
- * Create a render event
- * @param type - Event type
- * @param nodeId - Node identifier
- * @param node - Node data (optional)
- * @returns Render event object
- */
-export function createRenderEvent(
-  type: RenderEventType,
-  nodeId: string,
-  node?: StreamNode
-): RenderEvent {
-  return { type, nodeId, node };
-}
