@@ -56,7 +56,7 @@ export function Badge({
       className={cn(
         'inline-flex min-w-0 items-center overflow-hidden rounded-md font-medium',
         container,
-        !unstyled && 'bg-ts-muted text-ts-muted-foreground',
+        !unstyled && 'bg-gray-100 text-gray-600',
         className
       )}
       {...rest}

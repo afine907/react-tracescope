@@ -36,13 +36,13 @@ export interface TimelineProps extends ComponentPropsWithRef<'div'> {
 }
 
 const NODE_TYPE_TIMELINE_CLASS: Record<NodeTypeName, string> = {
-  user_input: 'bg-ts-timeline-user',
-  assistant_thought: 'bg-ts-timeline-thought',
-  tool_call: 'bg-ts-timeline-tool',
-  code_execution: 'bg-ts-timeline-code',
-  execution_result: 'bg-ts-timeline-result',
-  final_output: 'bg-ts-timeline-output',
-  error: 'bg-ts-timeline-error',
+  user_input: 'bg-indigo-400',
+  assistant_thought: 'bg-purple-400',
+  tool_call: 'bg-orange-400',
+  code_execution: 'bg-cyan-400',
+  execution_result: 'bg-emerald-400',
+  final_output: 'bg-sky-400',
+  error: 'bg-red-400',
 };
 
 /**

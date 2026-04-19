@@ -19,11 +19,11 @@ import type { NodeTypeName } from '../../types/node';
 export type AvatarSize = 'xs' | 'sm' | 'md' | 'lg' | 'xl';
 
 const sizeClasses: Record<AvatarSize, { container: string; icon: string }> = {
-  xs: { container: 'size-4', icon: 'size-2.5' },
-  sm: { container: 'size-5', icon: 'size-3' },
-  md: { container: 'size-6', icon: 'size-4' },
-  lg: { container: 'size-8', icon: 'size-5' },
-  xl: { container: 'size-10', icon: 'size-6' },
+  xs: { container: 'w-4 h-4', icon: 'w-2.5 h-2.5' },
+  sm: { container: 'w-5 h-5', icon: 'w-3 h-3' },
+  md: { container: 'w-6 h-6', icon: 'w-4 h-4' },
+  lg: { container: 'w-8 h-8', icon: 'w-5 h-5' },
+  xl: { container: 'w-10 h-10', icon: 'w-6 h-6' },
 };
 
 const NODE_TYPE_CONFIG: Record<
@@ -33,37 +33,37 @@ const NODE_TYPE_CONFIG: Record<
   user_input: {
     label: 'User',
     icon: User,
-    bgClass: 'bg-ts-node-user text-white',
+    bgClass: 'bg-indigo-500 text-white',
   },
   assistant_thought: {
     label: 'AI',
     icon: Zap,
-    bgClass: 'bg-ts-node-thought text-white',
+    bgClass: 'bg-purple-500 text-white',
   },
   tool_call: {
     label: 'Tool',
     icon: Wrench,
-    bgClass: 'bg-ts-node-tool text-white',
+    bgClass: 'bg-orange-500 text-white',
   },
   code_execution: {
     label: 'Code',
     icon: Code,
-    bgClass: 'bg-ts-node-code text-white',
+    bgClass: 'bg-cyan-500 text-white',
   },
   execution_result: {
     label: 'Result',
     icon: Terminal,
-    bgClass: 'bg-ts-node-result text-white',
+    bgClass: 'bg-emerald-500 text-white',
   },
   final_output: {
     label: 'Output',
     icon: CheckCircle,
-    bgClass: 'bg-ts-node-output text-white',
+    bgClass: 'bg-sky-500 text-white',
   },
   error: {
     label: 'Error',
     icon: AlertCircle,
-    bgClass: 'bg-ts-node-error text-white',
+    bgClass: 'bg-red-500 text-white',
   },
 };
 

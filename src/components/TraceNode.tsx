@@ -40,15 +40,15 @@ export interface TraceNodeProps {
  */
 const INDENT_SIZE = 24;
 
-// Map node types to CSS classes
-const NODE_TYPE_CLASSES: Record<NodeTypeName, string> = {
-  user_input: 'ts-node-user',
-  assistant_thought: 'ts-node-thought',
-  tool_call: 'ts-node-tool',
-  code_execution: 'ts-node-code',
-  execution_result: 'ts-node-result',
-  final_output: 'ts-node-output',
-  error: 'ts-node-error',
+// Map node types to border colors
+const NODE_TYPE_BORDER: Record<NodeTypeName, string> = {
+  user_input: 'border-l-indigo-500',
+  assistant_thought: 'border-l-purple-500',
+  tool_call: 'border-l-orange-500',
+  code_execution: 'border-l-cyan-500',
+  execution_result: 'border-l-emerald-500',
+  final_output: 'border-l-sky-500',
+  error: 'border-l-red-500',
 };
 
 /**
@@ -77,7 +77,7 @@ export function TraceNode({
 
   // Get node type for styling
   const nodeType = (node.data.nodeType || 'final_output') as NodeTypeName;
-  const nodeClass = NODE_TYPE_CLASSES[nodeType] || NODE_TYPE_CLASSES.final_output;
+  const borderClass = NODE_TYPE_BORDER[nodeType] || NODE_TYPE_BORDER.final_output;
 
   // Determine if node has children
   const hasChildren = node.children && node.children.length > 0;
@@ -94,12 +94,12 @@ export function TraceNode({
   return (
     <div
       className={cn(
-        'ts-node group relative',
-        nodeClass,
-        'rounded-lg border border-ts-border-subtle',
-        'bg-ts-background hover:border-ts-border',
+        'mb-2 group relative',
+        'rounded-lg border border-l-4 border-gray-200',
+        borderClass,
+        'bg-white hover:border-gray-300',
         'transition-all duration-200',
-        status === 'streaming' && 'ts-node-streaming',
+        status === 'streaming' && 'animate-pulse',
         className
       )}
       style={indentStyle}
@@ -138,7 +138,7 @@ export function TraceNode({
       {hasChildren && isExpanded && (
         <div className="relative">
           {/* Connector line */}
-          <div className="absolute left-3 top-0 bottom-0 w-px bg-ts-border-subtle" />
+          <div className="absolute left-3 top-0 bottom-0 w-px bg-gray-200" />
           
           {/* Child nodes */}
           <div className="space-y-1">

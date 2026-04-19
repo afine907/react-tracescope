@@ -206,16 +206,15 @@ function ComponentShowcase() {
           {nodeTypes.map(({ type, label, icon: Icon }) => (
             <div
               key={type}
-              className="flex items-center gap-3 p-3 rounded-lg border border-ts-border-subtle bg-ts-background"
+              className="flex items-center gap-3 p-3 rounded-lg border bg-white"
             >
               <Avatar nodeType={type} size="md" />
-              <div>
+              <div className="flex flex-col gap-1">
+                <span className="text-sm font-medium">{label}</span>
                 <Badge
-                  iconStart={<Icon className="size-3" />}
+                  iconStart={<Icon className="w-3 h-3" />}
                   label={label}
                   size="xs"
-                  className={`ts-badge-${type === 'user_input' ? 'user' : type === 'assistant_thought' ? 'thought' : type === 'tool_call' ? 'tool' : type === 'code_execution' ? 'code' : type === 'execution_result' ? 'result' : type === 'final_output' ? 'output' : 'error'}`}
-                  unstyled
                 />
               </div>
             </div>
@@ -241,10 +240,10 @@ function ComponentShowcase() {
       <section>
         <h3 className="text-lg font-semibold mb-4">Badge Sizes</h3>
         <div className="flex items-center gap-4">
-          <Badge iconStart={<Zap className="size-3" />} label="XS" size="xs" />
-          <Badge iconStart={<Zap className="size-3" />} label="SM" size="sm" />
-          <Badge iconStart={<Zap className="size-3" />} label="MD" size="md" />
-          <Badge iconStart={<Zap className="size-3" />} label="LG" size="lg" />
+          <Badge iconStart={<Zap className="w-3 h-3" />} label="XS" size="xs" />
+          <Badge iconStart={<Zap className="w-3 h-3" />} label="SM" size="sm" />
+          <Badge iconStart={<Zap className="w-3 h-3" />} label="MD" size="md" />
+          <Badge iconStart={<Zap className="w-3 h-3" />} label="LG" size="lg" />
         </div>
       </section>
 
@@ -265,14 +264,14 @@ function ComponentShowcase() {
       {/* Timeline 展示 */}
       <section>
         <h3 className="text-lg font-semibold mb-4">Timeline</h3>
-        <div className="space-y-3 p-4 rounded-lg border border-ts-border-subtle bg-ts-background">
+        <div className="space-y-3 p-4 rounded-lg border bg-white">
           {nodeTypes.slice(0, 5).map(({ type }, idx) => {
             const now = Date.now();
             const startTime = now - 10000 + idx * 1500;
             const endTime = startTime + 1000 + idx * 500;
             return (
               <div key={type} className="flex items-center gap-3">
-                <span className="w-24 text-sm text-ts-muted-foreground">{type}</span>
+                <span className="w-24 text-sm text-gray-600">{type}</span>
                 <Timeline
                   startTime={startTime}
                   endTime={endTime}
