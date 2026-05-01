@@ -17,23 +17,41 @@ const mockEvents = [
 // 简单的 Demo 组件
 function Demo() {
   const [events, setEvents] = React.useState<typeof mockEvents>([])
-  const [status, setStatus] = React.useState<'disconnected' | 'connected'>('disconnected')
+  const [status, setStatus] = React.useState<'disconnected' | 'connected' | 'running'>('disconnected')
+  const intervalRef = React.useRef<NodeJS.Timeout | null>(null)
 
   const simulateSSE = () => {
+    // 清除之前的 interval
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current)
+    }
+    
     setEvents([])
-    setStatus('connected')
+    setStatus('running')
     
     let index = 0
-    const interval = setInterval(() => {
+    intervalRef.current = setInterval(() => {
       if (index < mockEvents.length) {
         setEvents(prev => [...prev, mockEvents[index]])
         index++
       } else {
-        clearInterval(interval)
-        setStatus('disconnected')
+        if (intervalRef.current) {
+          clearInterval(intervalRef.current)
+          intervalRef.current = null
+        }
+        setStatus('connected')
       }
     }, 1000)
   }
+
+  // 清理
+  React.useEffect(() => {
+    return () => {
+      if (intervalRef.current) {
+        clearInterval(intervalRef.current)
+      }
+    }
+  }, [])
 
   return (
     <div style={{ height: '100vh', display: 'flex', flexDirection: 'column' }}>
@@ -51,17 +69,18 @@ function Demo() {
         <div style={{ width: '300px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
           <button
             onClick={simulateSSE}
+            disabled={status === 'running'}
             style={{
               padding: '12px',
-              background: '#3b82f6',
+              background: status === 'running' ? '#6b7280' : '#3b82f6',
               color: 'white',
               border: 'none',
               borderRadius: '6px',
-              cursor: 'pointer',
+              cursor: status === 'running' ? 'not-allowed' : 'pointer',
               fontSize: '16px',
             }}
           >
-            Simulate Agent Run
+            {status === 'running' ? 'Running...' : 'Simulate Agent Run'}
           </button>
           
           <div style={{ padding: '16px', background: '#242442', borderRadius: '8px', color: '#eaeaea' }}>
