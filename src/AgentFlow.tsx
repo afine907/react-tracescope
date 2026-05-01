@@ -48,6 +48,14 @@ export interface FlowEvent {
   result?: string;
   /** Timestamp */
   timestamp?: number;
+  /** Pre-serialized args for performance */
+  argsJson?: string;
+}
+
+/** Format timestamp to HH:MM:SS */
+function formatTime(ts: number): string {
+  const d = new Date(ts);
+  return d.toLocaleTimeString('en-US', { hour12: false });
 }
 
 /** Module-scoped icon map — never recreated */
@@ -69,16 +77,33 @@ const EventRow = memo(function EventRow({
   event,
   renderMessage,
   renderResult,
+  showArgs = true,
+  onToggleArgs,
 }: {
   event: FlowEvent;
   renderMessage?: (message: string) => React.ReactNode;
   renderResult?: (result: string) => React.ReactNode;
+  showArgs?: boolean;
+  onToggleArgs?: () => void;
 }) {
+  const time = event.timestamp ? formatTime(event.timestamp) : null;
+
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('[AgentFlow] Failed to copy:', err);
+    }
+  }, []);
+
   return (
     <div className={`agent-flow__event agent-flow__event--${event.type}`}>
       <EventIcon type={event.type} />
       <div className="agent-flow__event-content">
-        <span className="agent-flow__event-type">{event.type}</span>
+        <div className="agent-flow__event-header">
+          <span className="agent-flow__event-type">{event.type}</span>
+          {time && <span className="agent-flow__event-time">{time}</span>}
+        </div>
         {event.message && (
           <div className="agent-flow__event-message agent-flow__markdown">
             {renderMessage ? renderMessage(event.message) : <ReactMarkdown>{event.message}</ReactMarkdown>}
@@ -86,14 +111,40 @@ const EventRow = memo(function EventRow({
         )}
         {event.tool && (
           <div className="agent-flow__event-tool">
-            <span className="agent-flow__tool-name">{event.tool}</span>
-            {event.args && (
-              <pre className="agent-flow__tool-args">{JSON.stringify(event.args, null, 2)}</pre>
+            <div className="agent-flow__tool-header">
+              <span className="agent-flow__tool-name">{event.tool}</span>
+              {event.argsJson && onToggleArgs && (
+                <button
+                  className="agent-flow__tool-toggle"
+                  onClick={onToggleArgs}
+                >
+                  {showArgs ? '▼' : '▶'} args
+                </button>
+              )}
+            </div>
+            {showArgs && event.argsJson && (
+              <pre className="agent-flow__tool-args">
+                <button
+                  className="agent-flow__copy-btn"
+                  onClick={() => copyToClipboard(event.argsJson!)}
+                  title="Copy"
+                >
+                  📋
+                </button>
+                {event.argsJson}
+              </pre>
             )}
           </div>
         )}
         {event.result && (
           <div className="agent-flow__event-result agent-flow__markdown">
+            <button
+              className="agent-flow__copy-btn"
+              onClick={() => copyToClipboard(event.result!)}
+              title="Copy"
+            >
+              📋
+            </button>
             {renderResult ? renderResult(event.result) : <ReactMarkdown>{event.result}</ReactMarkdown>}
           </div>
         )}
@@ -136,13 +187,27 @@ const TimelineRow = memo(function TimelineRow({
   onToggle,
   renderMessage,
   renderResult,
+  showArgs = true,
+  onToggleArgs,
 }: {
   event: FlowEvent;
   collapsed: boolean;
   onToggle: () => void;
   renderMessage?: (message: string) => React.ReactNode;
   renderResult?: (result: string) => React.ReactNode;
+  showArgs?: boolean;
+  onToggleArgs?: () => void;
 }) {
+  const time = event.timestamp ? formatTime(event.timestamp) : null;
+
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('[AgentFlow] Failed to copy:', err);
+    }
+  }, []);
+
   return (
     <div
       className={`agent-flow__timeline-item agent-flow__timeline-item--${event.type}${collapsed ? ' agent-flow__timeline-item--collapsed' : ''}`}
@@ -159,12 +224,13 @@ const TimelineRow = memo(function TimelineRow({
           <EventIcon type={event.type} />
           <span className="agent-flow__timeline-label">{event.type}</span>
           <span className="agent-flow__timeline-summary">{getSummary(event)}</span>
+          {time && <span className="agent-flow__event-time">{time}</span>}
           <span className={`agent-flow__timeline-chevron${collapsed ? '' : ' agent-flow__timeline-chevron--open'}`}>
             ▶
           </span>
         </div>
         {!collapsed && (
-          <div className="agent-flow__timeline-detail">
+          <div className="agent-flow__timeline-detail" onClick={e => e.stopPropagation()}>
             {event.message && (
               <div className="agent-flow__event-message agent-flow__markdown">
                 {renderMessage ? renderMessage(event.message) : <ReactMarkdown>{event.message}</ReactMarkdown>}
@@ -172,14 +238,40 @@ const TimelineRow = memo(function TimelineRow({
             )}
             {event.tool && (
               <div className="agent-flow__event-tool">
-                <span className="agent-flow__tool-name">{event.tool}</span>
-                {event.args && (
-                  <pre className="agent-flow__tool-args">{JSON.stringify(event.args, null, 2)}</pre>
+                <div className="agent-flow__tool-header">
+                  <span className="agent-flow__tool-name">{event.tool}</span>
+                  {event.argsJson && onToggleArgs && (
+                    <button
+                      className="agent-flow__tool-toggle"
+                      onClick={onToggleArgs}
+                    >
+                      {showArgs ? '▼' : '▶'} args
+                    </button>
+                  )}
+                </div>
+                {showArgs && event.argsJson && (
+                  <pre className="agent-flow__tool-args">
+                    <button
+                      className="agent-flow__copy-btn"
+                      onClick={() => copyToClipboard(event.argsJson!)}
+                      title="Copy"
+                    >
+                      📋
+                    </button>
+                    {event.argsJson}
+                  </pre>
                 )}
               </div>
             )}
             {event.result && (
               <div className="agent-flow__event-result agent-flow__markdown">
+                <button
+                  className="agent-flow__copy-btn"
+                  onClick={() => copyToClipboard(event.result!)}
+                  title="Copy"
+                >
+                  📋
+                </button>
                 {renderResult ? renderResult(event.result) : <ReactMarkdown>{event.result}</ReactMarkdown>}
               </div>
             )}
@@ -205,9 +297,23 @@ export function AgentFlow({
   const [events, setEvents] = useState<FlowEvent[]>([]);
   const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
   const [collapsedIds, setCollapsedIds] = useState<Set<number>>(new Set());
+  const [expandedArgsIds, setExpandedArgsIds] = useState<Set<number>>(new Set());
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
 
   const toggleCollapse = useCallback((id: number) => {
     setCollapsedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleArgs = useCallback((id: number) => {
+    setExpandedArgsIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -267,10 +373,20 @@ export function AgentFlow({
     eventSource.onmessage = (e) => {
       try {
         const raw = JSON.parse(e.data);
+        let argsJson: string | undefined;
+        if (raw.args) {
+          try {
+            argsJson = JSON.stringify(raw.args, null, 2);
+          } catch (err) {
+            console.error('[AgentFlow] Failed to serialize args:', err);
+            argsJson = '[Unable to serialize]';
+          }
+        }
         const event: FlowEvent = {
           ...raw,
           id: idCounterRef.current++,
           timestamp: raw.timestamp || Date.now(),
+          argsJson,
         };
         pendingRef.current.push(event);
 
@@ -318,6 +434,28 @@ export function AgentFlow({
     overscan: 5,
   });
 
+  // Scroll to bottom
+  const scrollToBottom = useCallback(() => {
+    if (parentRef.current) {
+      parentRef.current.scrollTop = parentRef.current.scrollHeight;
+    }
+  }, []);
+
+  // Track scroll position to show/hide scroll-to-bottom button
+  useEffect(() => {
+    const el = parentRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollBottom(!isNearBottom);
+    };
+
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <div className={`agent-flow agent-flow--${theme}${viewMode === 'timeline' ? ' agent-flow--timeline' : ''}`}>
       {/* Header */}
@@ -326,6 +464,7 @@ export function AgentFlow({
           <span className={`agent-flow__status-dot agent-flow__status-dot--${status}`} />
           {status}
         </span>
+        <span className="agent-flow__event-count">{events.length} events</span>
         {status === 'disconnected' && (
           <button className="agent-flow__connect-btn" onClick={connect}>
             Connect
@@ -363,16 +502,29 @@ export function AgentFlow({
                       event={event}
                       collapsed={collapsedIds.has(event.id)}
                       onToggle={() => toggleCollapse(event.id)}
+                      showArgs={expandedArgsIds.has(event.id)}
+                      onToggleArgs={() => toggleArgs(event.id)}
                       renderMessage={renderMessage}
                       renderResult={renderResult}
                     />
                   ) : (
-                    <EventRow event={event} renderMessage={renderMessage} renderResult={renderResult} />
+                    <EventRow
+                      event={event}
+                      showArgs={expandedArgsIds.has(event.id)}
+                      onToggleArgs={() => toggleArgs(event.id)}
+                      renderMessage={renderMessage}
+                      renderResult={renderResult}
+                    />
                   )}
                 </div>
               );
             })}
           </div>
+        )}
+        {showScrollBottom && events.length > 0 && (
+          <button className="agent-flow__scroll-bottom" onClick={scrollToBottom} title="Scroll to bottom">
+            ↓
+          </button>
         )}
       </div>
     </div>
