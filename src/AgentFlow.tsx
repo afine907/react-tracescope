@@ -4,7 +4,7 @@
  * A simple React component for visualizing Agent execution traces.
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import './AgentFlow.css';
 
 export interface AgentFlowProps {
@@ -71,7 +71,7 @@ export function AgentFlow({
       }
     };
 
-    eventSource.onerror = (err) => {
+    eventSource.onerror = () => {
       handleStatusChange('error');
       const error = new Error('SSE connection failed');
       onError?.(error);
