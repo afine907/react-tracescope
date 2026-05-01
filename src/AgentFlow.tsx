@@ -77,16 +77,23 @@ const EventRow = memo(function EventRow({
   event,
   renderMessage,
   renderResult,
+  showArgs = true,
+  onToggleArgs,
 }: {
   event: FlowEvent;
   renderMessage?: (message: string) => React.ReactNode;
   renderResult?: (result: string) => React.ReactNode;
+  showArgs?: boolean;
+  onToggleArgs?: () => void;
 }) {
-  const [showArgs, setShowArgs] = useState(true);
   const time = event.timestamp ? formatTime(event.timestamp) : null;
 
-  const copyToClipboard = useCallback((text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('[AgentFlow] Failed to copy:', err);
+    }
   }, []);
 
   return (
@@ -106,10 +113,10 @@ const EventRow = memo(function EventRow({
           <div className="agent-flow__event-tool">
             <div className="agent-flow__tool-header">
               <span className="agent-flow__tool-name">{event.tool}</span>
-              {event.argsJson && (
+              {event.argsJson && onToggleArgs && (
                 <button
                   className="agent-flow__tool-toggle"
-                  onClick={() => setShowArgs(s => !s)}
+                  onClick={onToggleArgs}
                 >
                   {showArgs ? '▼' : '▶'} args
                 </button>
@@ -180,18 +187,25 @@ const TimelineRow = memo(function TimelineRow({
   onToggle,
   renderMessage,
   renderResult,
+  showArgs = true,
+  onToggleArgs,
 }: {
   event: FlowEvent;
   collapsed: boolean;
   onToggle: () => void;
   renderMessage?: (message: string) => React.ReactNode;
   renderResult?: (result: string) => React.ReactNode;
+  showArgs?: boolean;
+  onToggleArgs?: () => void;
 }) {
-  const [showArgs, setShowArgs] = useState(true);
   const time = event.timestamp ? formatTime(event.timestamp) : null;
 
-  const copyToClipboard = useCallback((text: string) => {
-    navigator.clipboard.writeText(text);
+  const copyToClipboard = useCallback(async (text: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (err) {
+      console.error('[AgentFlow] Failed to copy:', err);
+    }
   }, []);
 
   return (
@@ -226,10 +240,10 @@ const TimelineRow = memo(function TimelineRow({
               <div className="agent-flow__event-tool">
                 <div className="agent-flow__tool-header">
                   <span className="agent-flow__tool-name">{event.tool}</span>
-                  {event.argsJson && (
+                  {event.argsJson && onToggleArgs && (
                     <button
                       className="agent-flow__tool-toggle"
-                      onClick={() => setShowArgs(s => !s)}
+                      onClick={onToggleArgs}
                     >
                       {showArgs ? '▼' : '▶'} args
                     </button>
@@ -283,10 +297,23 @@ export function AgentFlow({
   const [events, setEvents] = useState<FlowEvent[]>([]);
   const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
   const [collapsedIds, setCollapsedIds] = useState<Set<number>>(new Set());
+  const [expandedArgsIds, setExpandedArgsIds] = useState<Set<number>>(new Set());
   const [showScrollBottom, setShowScrollBottom] = useState(false);
 
   const toggleCollapse = useCallback((id: number) => {
     setCollapsedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  const toggleArgs = useCallback((id: number) => {
+    setExpandedArgsIds(prev => {
       const next = new Set(prev);
       if (next.has(id)) {
         next.delete(id);
@@ -346,7 +373,15 @@ export function AgentFlow({
     eventSource.onmessage = (e) => {
       try {
         const raw = JSON.parse(e.data);
-        const argsJson = raw.args ? JSON.stringify(raw.args, null, 2) : undefined;
+        let argsJson: string | undefined;
+        if (raw.args) {
+          try {
+            argsJson = JSON.stringify(raw.args, null, 2);
+          } catch (err) {
+            console.error('[AgentFlow] Failed to serialize args:', err);
+            argsJson = '[Unable to serialize]';
+          }
+        }
         const event: FlowEvent = {
           ...raw,
           id: idCounterRef.current++,
@@ -467,11 +502,19 @@ export function AgentFlow({
                       event={event}
                       collapsed={collapsedIds.has(event.id)}
                       onToggle={() => toggleCollapse(event.id)}
+                      showArgs={expandedArgsIds.has(event.id)}
+                      onToggleArgs={() => toggleArgs(event.id)}
                       renderMessage={renderMessage}
                       renderResult={renderResult}
                     />
                   ) : (
-                    <EventRow event={event} renderMessage={renderMessage} renderResult={renderResult} />
+                    <EventRow
+                      event={event}
+                      showArgs={expandedArgsIds.has(event.id)}
+                      onToggleArgs={() => toggleArgs(event.id)}
+                      renderMessage={renderMessage}
+                      renderResult={renderResult}
+                    />
                   )}
                 </div>
               );
