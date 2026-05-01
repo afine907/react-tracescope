@@ -27,6 +27,10 @@ export interface AgentFlowProps {
   renderMessage?: (message: string) => React.ReactNode;
   /** Custom renderer for tool results (overrides default markdown) */
   renderResult?: (result: string) => React.ReactNode;
+  /** View mode: 'list' (card style) or 'timeline' (collapsible timeline) */
+  viewMode?: 'list' | 'timeline';
+  /** Whether new events are collapsed by default in timeline mode */
+  defaultCollapsed?: boolean;
 }
 
 export interface FlowEvent {
@@ -98,6 +102,94 @@ const EventRow = memo(function EventRow({
   );
 });
 
+/** Generate a one-line summary for the collapsed timeline view */
+function getSummary(event: FlowEvent): string {
+  switch (event.type) {
+    case 'message':
+      return event.message?.split('\n')[0]?.slice(0, 80) ?? '';
+    case 'tool_call':
+      return event.tool + (event.args?.path ? ` ${event.args.path}` : '');
+    case 'tool_result':
+      return event.result?.split('\n')[0]?.slice(0, 80) ?? '';
+    case 'error':
+      return event.message?.split('\n')[0]?.slice(0, 80) ?? 'Error';
+    case 'thinking':
+      return event.message?.split('\n')[0]?.slice(0, 80) ?? 'Thinking...';
+    default:
+      return event.type;
+  }
+}
+
+const EVENT_DOT_COLORS: Record<FlowEvent['type'], string> = {
+  start: '#3b82f6',
+  thinking: '#8b5cf6',
+  tool_call: '#f59e0b',
+  tool_result: '#10b981',
+  message: '#06b6d4',
+  error: '#ef4444',
+  end: '#10b981',
+};
+
+const TimelineRow = memo(function TimelineRow({
+  event,
+  collapsed,
+  onToggle,
+  renderMessage,
+  renderResult,
+}: {
+  event: FlowEvent;
+  collapsed: boolean;
+  onToggle: () => void;
+  renderMessage?: (message: string) => React.ReactNode;
+  renderResult?: (result: string) => React.ReactNode;
+}) {
+  return (
+    <div
+      className={`agent-flow__timeline-item agent-flow__timeline-item--${event.type}${collapsed ? ' agent-flow__timeline-item--collapsed' : ''}`}
+      onClick={onToggle}
+    >
+      <div className="agent-flow__timeline-track">
+        <span
+          className="agent-flow__timeline-dot"
+          style={{ background: EVENT_DOT_COLORS[event.type] }}
+        />
+      </div>
+      <div className="agent-flow__timeline-body">
+        <div className="agent-flow__timeline-header">
+          <EventIcon type={event.type} />
+          <span className="agent-flow__timeline-label">{event.type}</span>
+          <span className="agent-flow__timeline-summary">{getSummary(event)}</span>
+          <span className={`agent-flow__timeline-chevron${collapsed ? '' : ' agent-flow__timeline-chevron--open'}`}>
+            ▶
+          </span>
+        </div>
+        {!collapsed && (
+          <div className="agent-flow__timeline-detail">
+            {event.message && (
+              <div className="agent-flow__event-message agent-flow__markdown">
+                {renderMessage ? renderMessage(event.message) : <ReactMarkdown>{event.message}</ReactMarkdown>}
+              </div>
+            )}
+            {event.tool && (
+              <div className="agent-flow__event-tool">
+                <span className="agent-flow__tool-name">{event.tool}</span>
+                {event.args && (
+                  <pre className="agent-flow__tool-args">{JSON.stringify(event.args, null, 2)}</pre>
+                )}
+              </div>
+            )}
+            {event.result && (
+              <div className="agent-flow__event-result agent-flow__markdown">
+                {renderResult ? renderResult(event.result) : <ReactMarkdown>{event.result}</ReactMarkdown>}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+
 export function AgentFlow({
   url,
   theme = 'dark',
@@ -107,9 +199,35 @@ export function AgentFlow({
   maxEvents = 10_000,
   renderMessage,
   renderResult,
+  viewMode = 'list',
+  defaultCollapsed = true,
 }: AgentFlowProps) {
   const [events, setEvents] = useState<FlowEvent[]>([]);
   const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
+  const [collapsedIds, setCollapsedIds] = useState<Set<number>>(new Set());
+
+  const toggleCollapse = useCallback((id: number) => {
+    setCollapsedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  // Auto-collapse new events in timeline mode
+  useEffect(() => {
+    if (viewMode === 'timeline' && defaultCollapsed && events.length > 0) {
+      const latest = events[events.length - 1];
+      if (!collapsedIds.has(latest.id)) {
+        setCollapsedIds(prev => new Set(prev).add(latest.id));
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [events.length]);
 
   // Batching: buffer SSE messages and flush once per animation frame
   const pendingRef = useRef<FlowEvent[]>([]);
@@ -201,7 +319,7 @@ export function AgentFlow({
   });
 
   return (
-    <div className={`agent-flow agent-flow--${theme}`}>
+    <div className={`agent-flow agent-flow--${theme}${viewMode === 'timeline' ? ' agent-flow--timeline' : ''}`}>
       {/* Header */}
       <div className="agent-flow__header">
         <span className="agent-flow__status">
@@ -240,7 +358,17 @@ export function AgentFlow({
                   data-index={virtualRow.index}
                   ref={virtualizer.measureElement}
                 >
-                  <EventRow event={event} renderMessage={renderMessage} renderResult={renderResult} />
+                  {viewMode === 'timeline' ? (
+                    <TimelineRow
+                      event={event}
+                      collapsed={collapsedIds.has(event.id)}
+                      onToggle={() => toggleCollapse(event.id)}
+                      renderMessage={renderMessage}
+                      renderResult={renderResult}
+                    />
+                  ) : (
+                    <EventRow event={event} renderMessage={renderMessage} renderResult={renderResult} />
+                  )}
                 </div>
               );
             })}

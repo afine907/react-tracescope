@@ -10,6 +10,7 @@ function Demo() {
   const [eventCount, setEventCount] = React.useState(1000)
   const [sseUrl, setSseUrl] = React.useState('')
   const [running, setRunning] = React.useState(false)
+  const [viewMode, setViewMode] = React.useState<'list' | 'timeline'>('timeline')
 
   const startStream = () => {
     setSseUrl(`${MOCK_SERVER}/stream?count=${eventCount}`)
@@ -70,6 +71,20 @@ function Demo() {
               {running ? 'Stop' : 'Start'}
             </button>
             <button
+              onClick={() => setViewMode(m => m === 'timeline' ? 'list' : 'timeline')}
+              style={{
+                padding: '10px 14px',
+                background: '#242442',
+                color: '#eaeaea',
+                border: '1px solid #3d3d5c',
+                borderRadius: '6px',
+                cursor: 'pointer',
+                fontSize: '14px',
+              }}
+            >
+              {viewMode === 'timeline' ? '☰' : '⏱'}
+            </button>
+            <button
               onClick={() => setTheme(t => t === 'dark' ? 'light' : 'dark')}
               style={{
                 padding: '10px 14px',
@@ -115,6 +130,7 @@ function Demo() {
               key={sseUrl}
               url={sseUrl}
               theme={theme}
+              viewMode={viewMode}
               maxEvents={10_000}
             />
           ) : (

@@ -374,3 +374,162 @@
   background: #d1d5db;
   border-radius: 4px;
 }
+
+/* =============================================
+   Timeline View
+   ============================================= */
+
+.agent-flow--timeline .agent-flow__events {
+  padding: 16px 16px 16px 0;
+}
+
+/* Timeline item */
+.agent-flow__timeline-item {
+  display: flex;
+  cursor: pointer;
+  user-select: none;
+}
+
+.agent-flow__timeline-item:hover {
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.agent-flow--light .agent-flow__timeline-item:hover {
+  background: rgba(0, 0, 0, 0.02);
+}
+
+/* Left track with vertical line + dot */
+.agent-flow__timeline-track {
+  position: relative;
+  width: 32px;
+  flex-shrink: 0;
+  display: flex;
+  justify-content: center;
+}
+
+.agent-flow__timeline-track::before {
+  content: '';
+  position: absolute;
+  top: -16px;
+  bottom: 0;
+  left: 50%;
+  width: 2px;
+  transform: translateX(-50%);
+}
+
+.agent-flow--dark .agent-flow__timeline-track::before {
+  background: #3d3d5c;
+}
+
+.agent-flow--light .agent-flow__timeline-track::before {
+  background: #d1d5db;
+}
+
+/* Dot on the timeline */
+.agent-flow__timeline-dot {
+  position: relative;
+  z-index: 1;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-top: 12px;
+  flex-shrink: 0;
+}
+
+/* Body (right side) */
+.agent-flow__timeline-body {
+  flex: 1;
+  min-width: 0;
+  padding: 6px 12px 14px 4px;
+}
+
+/* Header row (always visible) */
+.agent-flow__timeline-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 28px;
+}
+
+.agent-flow__timeline-header .agent-flow__event-icon {
+  font-size: 15px;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.agent-flow__timeline-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+}
+
+.agent-flow--dark .agent-flow__timeline-label {
+  color: #8b8ba8;
+}
+
+.agent-flow--light .agent-flow__timeline-label {
+  color: #6b7280;
+}
+
+.agent-flow__timeline-summary {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+}
+
+.agent-flow--dark .agent-flow__timeline-summary {
+  color: #a5b4fc;
+}
+
+.agent-flow--light .agent-flow__timeline-summary {
+  color: #374151;
+}
+
+/* Collapsed: summary is emphasized */
+.agent-flow__timeline-item--collapsed .agent-flow__timeline-summary {
+  font-weight: 500;
+}
+
+/* Chevron */
+.agent-flow__timeline-chevron {
+  font-size: 10px;
+  transition: transform 0.15s ease;
+  flex-shrink: 0;
+  opacity: 0.5;
+}
+
+.agent-flow__timeline-chevron--open {
+  transform: rotate(90deg);
+}
+
+/* Detail (expanded content) */
+.agent-flow__timeline-detail {
+  margin-top: 8px;
+  padding-left: 2px;
+  animation: timeline-expand 0.15s ease;
+}
+
+@keyframes timeline-expand {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Type label colors */
+.agent-flow__timeline-item--start .agent-flow__timeline-label { color: #3b82f6; }
+.agent-flow__timeline-item--thinking .agent-flow__timeline-label { color: #8b5cf6; }
+.agent-flow__timeline-item--tool_call .agent-flow__timeline-label { color: #f59e0b; }
+.agent-flow__timeline-item--tool_result .agent-flow__timeline-label { color: #10b981; }
+.agent-flow__timeline-item--message .agent-flow__timeline-label { color: #06b6d4; }
+.agent-flow__timeline-item--error .agent-flow__timeline-label { color: #ef4444; }
+.agent-flow__timeline-item--end .agent-flow__timeline-label { color: #10b981; }
