@@ -1,6 +1,6 @@
-# Contributing to TraceScope
+# Contributing to agent-sse-flow
 
-Thank you for your interest in contributing to TraceScope! This document outlines the guidelines for contributing to this project.
+Thank you for your interest in contributing to agent-sse-flow! This document outlines the guidelines for contributing to this project.
 
 ## Code of Conduct
 
@@ -39,8 +39,8 @@ Please be respectful and inclusive. We follow the [Contributor Covenant](https:/
 
 ```bash
 # Clone the repo
-git clone https://github.com/your-username/tracescope.git
-cd tracescope
+git clone https://github.com/your-username/agent-sse-flow.git
+cd agent-sse-flow
 
 # Install dependencies
 npm install
@@ -67,7 +67,7 @@ node test-e2e.js
 ## Project Structure
 
 ```
-tracescope/
+agent-sse-flow/
 ├── src/
 │   ├── core/           # Core engine (SSE, State, Tree, Renderer)
 │   ├── adapters/       # Framework adapters (React)

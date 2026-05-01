@@ -10,8 +10,6 @@
 
 A lightweight React component for visualizing Agent execution traces from SSE streams.
 
-![AgentFlow Demo](./docs/demo-screenshot.png)
-
 ## Why?
 
 | Problem | Solution |
@@ -143,10 +141,10 @@ function App() {
 
 ## License
 
-MIT © 2024
+MIT © 2025
 
 ## Links
 
-- [GitHub](https://github.com/afine907/react-tracescope)
+- [GitHub](https://github.com/afine907/agent-sse-flow)
 - [NPM](https://www.npmjs.com/package/agent-sse-flow)
-- [Issues](https://github.com/afine907/react-tracescope/issues)
+- [Issues](https://github.com/afine907/agent-sse-flow/issues)

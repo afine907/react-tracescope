@@ -44,7 +44,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/afine907/react-tracescope"
+    "url": "git+https://github.com/afine907/agent-sse-flow.git"
   },
   "peerDependencies": {
     "react": ">=18.0.0",

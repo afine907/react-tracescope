@@ -149,10 +149,10 @@ pnpm type-check
 
 ## License
 
-MIT © 2024
+MIT © 2025
 
 ## 链接
 
-- [GitHub](https://github.com/afine907/react-tracescope)
+- [GitHub](https://github.com/afine907/agent-sse-flow)
 - [NPM](https://www.npmjs.com/package/agent-sse-flow)
-- [Issues](https://github.com/afine907/react-tracescope/issues)
+- [Issues](https://github.com/afine907/agent-sse-flow/issues)
