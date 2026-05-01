@@ -283,6 +283,7 @@ export function AgentFlow({
   const [events, setEvents] = useState<FlowEvent[]>([]);
   const [status, setStatus] = useState<'connecting' | 'connected' | 'disconnected' | 'error'>('disconnected');
   const [collapsedIds, setCollapsedIds] = useState<Set<number>>(new Set());
+  const [showScrollBottom, setShowScrollBottom] = useState(false);
 
   const toggleCollapse = useCallback((id: number) => {
     setCollapsedIds(prev => {
@@ -398,6 +399,28 @@ export function AgentFlow({
     overscan: 5,
   });
 
+  // Scroll to bottom
+  const scrollToBottom = useCallback(() => {
+    if (parentRef.current) {
+      parentRef.current.scrollTop = parentRef.current.scrollHeight;
+    }
+  }, []);
+
+  // Track scroll position to show/hide scroll-to-bottom button
+  useEffect(() => {
+    const el = parentRef.current;
+    if (!el) return;
+
+    const onScroll = () => {
+      const { scrollTop, scrollHeight, clientHeight } = el;
+      const isNearBottom = scrollHeight - scrollTop - clientHeight < 100;
+      setShowScrollBottom(!isNearBottom);
+    };
+
+    el.addEventListener('scroll', onScroll, { passive: true });
+    return () => el.removeEventListener('scroll', onScroll);
+  }, []);
+
   return (
     <div className={`agent-flow agent-flow--${theme}${viewMode === 'timeline' ? ' agent-flow--timeline' : ''}`}>
       {/* Header */}
@@ -454,6 +477,11 @@ export function AgentFlow({
               );
             })}
           </div>
+        )}
+        {showScrollBottom && events.length > 0 && (
+          <button className="agent-flow__scroll-bottom" onClick={scrollToBottom} title="Scroll to bottom">
+            ↓
+          </button>
         )}
       </div>
     </div>

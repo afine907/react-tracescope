@@ -125,6 +125,7 @@
 /* Virtual scroll row */
 .agent-flow__event-row {
   padding-bottom: 16px;
+  contain: layout style;
 }
 
 /* Event Item */
@@ -133,6 +134,8 @@
   gap: 12px;
   padding: 12px;
   border-radius: 6px;
+  contain: content;
+  will-change: transform;
 }
 
 .agent-flow--dark .agent-flow__event {
@@ -431,6 +434,39 @@
   opacity: 0.5;
 }
 
+/* Scroll to Bottom Button */
+.agent-flow__scroll-bottom {
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  width: 36px;
+  height: 36px;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  transition: transform 0.15s, opacity 0.15s;
+  z-index: 10;
+}
+
+.agent-flow__scroll-bottom:hover {
+  transform: scale(1.1);
+}
+
+.agent-flow--dark .agent-flow__scroll-bottom {
+  background: #3b82f6;
+  color: white;
+}
+
+.agent-flow--light .agent-flow__scroll-bottom {
+  background: #3b82f6;
+  color: white;
+}
+
 /* Scrollbar */
 .agent-flow__events::-webkit-scrollbar {
   width: 8px;
@@ -467,6 +503,8 @@
   display: flex;
   cursor: pointer;
   user-select: none;
+  contain: content;
+  will-change: transform;
 }
 
 .agent-flow__timeline-item:hover {
