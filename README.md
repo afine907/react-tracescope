@@ -16,6 +16,8 @@ A lightweight React component for visualizing Agent execution traces from SSE st
 
 ```bash
 npm install agent-sse-flow
+# or
+pnpm add agent-sse-flow
 ```
 
 ## Usage

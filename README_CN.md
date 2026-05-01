@@ -1,197 +1,158 @@
-# TraceScope - Agent Trace 可视化标准方案
+# agent-sse-flow
 
-> ⚡ 极致性能的 Agent 执行轨迹可视化组件 | 支持 SSE 流式推送
+> Agent SSE 流式可视化组件 - 免费、无限制、本地运行
 
----
+一个轻量级 React 组件，用于可视化 Agent 执行轨迹的 SSE 流。
 
-## 为什么选择 TraceScope?
+## 为什么选择 agent-sse-flow?
 
 | 痛点 | 解决方案 |
 |------|----------|
-| 各公司 trace 格式不统一 | **协议标准化** - 一次接入，适配所有 |
-| 大节点量卡顿 | **极致性能** - 虚拟滚动 + 增量渲染 |
-| 换框架要重写 | **Adapter 适配层** - 切换框架零改动 |
-| 体验不够丝滑 | **60fps 目标** - 帧率控制 + Web Worker |
+| LangSmith 免费版每月限制 5000 条 trace | ✅ 完全免费，无限制 |
+| LangSmith 数据上传到云端 | ✅ 本地运行，数据不离开你的机器 |
+| 调试工具过于复杂 | ✅ 简单组件，5 分钟集成 |
 
-### 核心特性
-
-- 📜 **协议优先** - [TRACE_PROTOCOL.md](./docs/TRACE_PROTOCOL.md) 定义行业标准
-- ⚡ **极致性能** - 10万节点流畅渲染
-- 🔌 **Universal 适配器** - LangChain / AutoGen / Dify / Coze 开箱即用
-- 💬 **对话模式** - 流式输出 + Token 计费 + 思考过程折叠
-- 🛠️ **TypeScript** - 完整类型定义，IDE 友好
-
-### 快速开始
-
-```tsx
-import { TraceScopeProvider, TraceTree } from 'react-tracescope';
-import 'react-tracescope/style.css';
-
-function App() {
-  return (
-    <TraceScopeProvider
-      config={{
-        url: 'https://api.example.com/trace/stream',
-        adapter: 'langchain',  // 自动转换格式
-        autoConnect: true,
-      }}
-    >
-      <TraceTree />
-    </TraceScopeProvider>
-  );
-}
-```
-
-### 性能数据
-
-| 节点数 | 帧率 | 内存 | 首屏 |
-|--------|------|------|------|
-| 1,000 | 60fps | ~10MB | <50ms |
-| 5,000 | 60fps | ~25MB | <80ms |
-| 50,000 | 45fps | ~80MB | <150ms |
-| 100,000 | 30fps | ~100MB | <200ms |
-
-### 支持的框架
-
-| 框架 | 适配器 | 状态 |
-|------|--------|------|
-| 自定义 JSON | `custom` | ✅ 稳定 |
-| LangChain | `langchain` | ✅ 稳定 |
-| AutoGen | `autogen` | ✅ 稳定 |
-| Dify | `dify` | ✅ 稳定 |
-| Coze | `coze` | 📋 规划 |
-
-详细适配器用法见 [ADAPTERS.md](./docs/ADAPTERS.md)。
-
-### 集成包 - 开箱即用的框架支持
-
-TraceScope 为每个框架提供了**集成包**，包含预置适配器、React Hooks 和示例数据：
-
-```tsx
-// LangChain 集成
-import { 
-  LangChainIntegration,        // 一站式导出
-  useLangChainStream,          // SSE 流 Hook
-  useLangChainTrace,           // 静态数据 Hook
-  createLangChainConfig,       // 配置工厂
-  langchainAgentEvents,        // 示例数据
-} from 'react-tracescope/integrations/langchain';
-
-// AutoGen 集成
-import { 
-  AutoGenIntegration,
-  useAutoGenStream,
-  useAutoGenEvents,
-  createAutoGenConfig,
-  autogenMultiAgentEvents,
-} from 'react-tracescope/integrations/autogen';
-
-// Dify 集成
-import { 
-  DifyIntegration,
-  useDifyStream,
-  useDifyEvents,
-  createDifyConfig,
-  difyCustomerServiceEvents,
-} from 'react-tracescope/integrations/dify';
-```
-
-**快速开始：**
-
-```tsx
-import { TraceScopeProvider, TraceTree } from 'react-tracescope';
-import { useLangChainStream, langchainAgentEvents } from 'react-tracescope/integrations/langchain';
-
-function App() {
-  // 方式1: 使用 Hook 处理实时数据
-  const { events, status } = useLangChainStream({
-    traceUrl: 'http://localhost:8000/trace/stream',
-    autoConnect: true,
-  });
-
-  return (
-    <TraceScopeProvider
-      config={{ adapter: 'custom', autoConnect: false }}
-      initialEvents={events.length > 0 ? events : langchainAgentEvents}
-    >
-      <TraceTree />
-    </TraceScopeProvider>
-  );
-}
-```
-
-**预设配置：**
-
-| 框架 | 预设 | 说明 |
-|------|------|------|
-| LangChain | `local` | 本地开发 |
-| LangChain | `langsmith` | LangSmith 云服务 |
-| AutoGen | `local` | 本地开发 |
-| Dify | `cloud` | Dify 云 API |
-| Dify | `selfHosted` | 自托管 Dify |
-
-### 示例 - 开箱即用的 Demo 数据
-
-TraceScope 为每个框架提供了内置示例数据：
-
-```tsx
-import { TraceScopeProvider, TraceTree } from 'react-tracescope';
-import { langchainAgentTrace, langchainAgentEvents } from 'react-tracescope';
-
-// 方式1: 使用适配器 (实时 SSE 流)
-function App1() {
-  return (
-    <TraceScopeProvider config={{ adapter: 'langchain' }}>
-      <TraceTree />
-    </TraceScopeProvider>
-  );
-}
-
-// 方式2: 使用示例数据 (静态)
-function App2() {
-  return (
-    <TraceScopeProvider
-      config={{ adapter: 'custom', autoConnect: false }}
-      initialEvents={langchainAgentEvents}
-    >
-      <TraceTree />
-    </TraceScopeProvider>
-  );
-}
-```
-
-**可用示例：**
-
-| 框架 | 导入 | 说明 |
-|------|------|------|
-| LangChain | `langchainAgentTrace` | 完整 Agent 流程 (LLM + 工具) |
-| AutoGen | `autogenMultiAgentTrace` | 多 Agent 协作 |
-| Dify | `difyCustomerServiceWorkflow` | 客服工作流 |
-
-### 安装
+## 安装
 
 ```bash
-npm install react-tracescope
-# 或
-pnpm add react-tracescope
+npm install agent-sse-flow
 ```
 
-### 开发
+## 使用
+
+```tsx
+import { AgentFlow } from 'agent-sse-flow'
+import 'agent-sse-flow/style.css'
+
+function App() {
+  return (
+    <AgentFlow 
+      url="http://localhost:8080/agent/stream"
+      theme="dark"
+    />
+  )
+}
+```
+
+## Props
+
+| Prop | 类型 | 默认值 | 说明 |
+|------|------|--------|------|
+| `url` | `string` | 必填 | SSE 端点 URL |
+| `theme` | `'light' \| 'dark'` | `'dark'` | 颜色主题 |
+| `autoConnect` | `boolean` | `true` | 挂载时自动连接 |
+| `onError` | `(error: Error) => void` | - | 错误回调 |
+| `onStatusChange` | `(status: string) => void` | - | 连接状态回调 |
+
+## SSE 事件格式
+
+组件期望接收以下 JSON 格式的 SSE 事件：
+
+```json
+{"type": "start", "message": "Agent started"}
+{"type": "thinking", "message": "Analyzing request..."}
+{"type": "tool_call", "tool": "read_file", "args": {"path": "src/index.ts"}}
+{"type": "tool_result", "result": "file content..."}
+{"type": "message", "message": "Here's what I found..."}
+{"type": "end", "message": "Done"}
+```
+
+### 事件类型
+
+| 类型 | 说明 | 字段 |
+|------|------|------|
+| `start` | Agent 启动 | `message` |
+| `thinking` | Agent 思考中 | `message` |
+| `tool_call` | 调用工具 | `tool`, `args` |
+| `tool_result` | 工具返回结果 | `result` |
+| `message` | 文本消息 | `message` |
+| `error` | 发生错误 | `message` |
+| `end` | Agent 结束 | `message` |
+
+## 示例：LangGraph 集成
+
+```python
+# Python (FastAPI)
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+
+app = FastAPI()
+
+@app.get("/agent/stream")
+async def agent_stream():
+    async def generate():
+        yield f'data: {{"type": "start", "message": "Agent started"}}\n\n'
+        
+        yield f'data: {{"type": "thinking", "message": "Analyzing..."}}\n\n'
+        
+        yield f'data: {{"type": "tool_call", "tool": "read_file", "args": {{"path": "test.py"}}}}\n\n'
+        
+        result = read_file("test.py")
+        yield f'data: {{"type": "tool_result", "result": "{result}"}}\n\n'
+        
+        yield f'data: {{"type": "end", "message": "Done"}}\n\n'
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
+```
+
+```tsx
+// React
+import { AgentFlow } from 'agent-sse-flow'
+import 'agent-sse-flow/style.css'
+
+function App() {
+  return (
+    <div style={{ height: '100vh' }}>
+      <AgentFlow 
+        url="http://localhost:8000/agent/stream"
+        theme="dark"
+      />
+    </div>
+  )
+}
+```
+
+## 特性
+
+- ✅ **SSE 流式传输** - 实时事件可视化
+- ✅ **深色/浅色主题** - 内置主题支持
+- ✅ **连接状态** - 可视化状态指示器
+- ✅ **错误处理** - 优雅的错误展示
+- ✅ **TypeScript** - 完整类型支持
+- ✅ **零依赖** - 仅需 React 作为 peer dependency
+
+## 对比
+
+| 特性 | agent-sse-flow | LangSmith |
+|------|---------------|-----------|
+| 价格 | 免费 | 免费版有限制 |
+| Trace 限制 | 无限制 | 5000条/月 |
+| 数据位置 | 本地 | 云端 |
+| 接入时间 | 5 分钟 | 需要注册账号 |
+| 依赖 | 仅 React | LangChain 生态 |
+
+## 开发
 
 ```bash
 # 安装依赖
-npm install
+pnpm install
 
 # 启动开发服务器
-npm run dev
-
-# 启动 Mock SSE 服务器
-npm run mock-server
+pnpm dev
 
 # 构建
-npm run build
+pnpm build
+
+# 类型检查
+pnpm type-check
 ```
 
-### License
+## License
 
 MIT © 2024
+
+## 链接
+
+- [GitHub](https://github.com/afine907/react-tracescope)
+- [NPM](https://www.npmjs.com/package/agent-sse-flow)
+- [Issues](https://github.com/afine907/react-tracescope/issues)
