@@ -1,197 +1,142 @@
-# TraceScope - Agent Trace Visualization Standard
+# agent-sse-flow
 
-> ⚡ High-Performance Agent Execution Trace Visualization Component | Support SSE Streaming
+> Agent SSE Stream Visualizer - Free, unlimited, local
 
----
+A lightweight React component for visualizing Agent execution traces from SSE streams.
 
-## Why TraceScope?
+## Why?
 
-| Pain Point | TraceScope Solution |
-|------------|---------------------|
-| Each company defines its own trace format | ✅ **Protocol Standardization** - Unified data format |
-| 5000+ nodes lag | ✅ **Extreme Performance** - Virtual scrolling + incremental rendering |
-| High cost to adapt different frameworks | ✅ **Adapter Layer** - Zero-code framework switching |
-| Hard to achieve smooth experience | ✅ **60fps Target** - Frame rate control + Web Worker |
+| Problem | Solution |
+|---------|----------|
+| LangSmith free tier limited to 5000 traces/month | ✅ Unlimited, completely free |
+| LangSmith uploads data to cloud | ✅ Local, data never leaves your machine |
+| Complex debugging tools | ✅ Simple component, 5-minute integration |
 
-### Key Features
+## Install
 
-- 📜 **Protocol-First** - Standard data format defined in [TRACE_PROTOCOL.md](./docs/TRACE_PROTOCOL.md)
-- ⚡ **Extreme Performance** - Virtual scrolling supports 100,000+ nodes, 60fps smooth rendering
-- 🔌 **Universal Adapter** - Supports LangChain / AutoGen / Dify / Coze and other mainstream frameworks
-- 💬 **Chat Streaming** - Streaming output + Token billing in chat mode
-- 🛠️ **TypeScript Full Support** - Complete type definitions, IDE auto-completion
+```bash
+npm install agent-sse-flow
+```
 
-### Quick Start
+## Usage
 
 ```tsx
-import { TraceScopeProvider, TraceTree } from 'react-tracescope';
-import 'react-tracescope/style.css';
+import { AgentFlow } from 'agent-sse-flow'
+import 'agent-sse-flow/style.css'
 
 function App() {
   return (
-    <TraceScopeProvider
-      config={{
-        url: 'https://api.example.com/trace/stream',
-        adapter: 'langchain',  // Auto-convert format
-        autoConnect: true,
-      }}
-    >
-      <TraceTree />
-    </TraceScopeProvider>
-  );
+    <AgentFlow 
+      url="http://localhost:8080/agent/stream"
+      theme="dark"
+    />
+  )
 }
 ```
 
-### Performance Benchmarks
+## Props
 
-| Nodes | FPS | Memory | First Paint |
-|-------|-----|--------|-------------|
-| 1,000 | 60fps | ~10MB | <50ms |
-| 5,000 | 60fps | ~25MB | <80ms |
-| 50,000 | 45fps | ~80MB | <150ms |
-| 100,000 | 30fps | ~100MB | <200ms |
+| Prop | Type | Default | Description |
+|------|------|---------|-------------|
+| `url` | `string` | required | SSE endpoint URL |
+| `theme` | `'light' \| 'dark'` | `'dark'` | Color theme |
+| `autoConnect` | `boolean` | `true` | Auto connect on mount |
+| `onError` | `(error: Error) => void` | - | Error callback |
+| `onStatusChange` | `(status: string) => void` | - | Connection status callback |
 
-### Supported Frameworks
+## SSE Event Format
 
-| Framework | Adapter | Status | Notes |
-|-----------|---------|--------|-------|
-| Custom JSON | `custom` | ✅ Stable | Zero config, follows protocol |
-| LangChain | `langchain` | ✅ Stable | v0.1+ |
-| AutoGen | `autogen` | ✅ Stable | v0.2+ |
-| Dify | `dify` | ✅ Stable | Workflow |
-| Coze | `coze` | 📋 Planned | Bot |
+Expects JSON events with the following structure:
 
-For detailed adapter usage, see [ADAPTERS.md](./docs/ADAPTERS.md).
-
-### Integrations - Out-of-Box Framework Support
-
-TraceScope provides **integration packages** for each framework with pre-built adapters, React hooks, and demo data:
-
-```tsx
-// LangChain Integration
-import { 
-  LangChainIntegration,        // All-in-one export
-  useLangChainStream,          // Hook for SSE stream
-  useLangChainTrace,           // Hook for static data
-  createLangChainConfig,       // Config factory
-  langchainAgentEvents,        // Demo data
-} from 'react-tracescope/integrations/langchain';
-
-// AutoGen Integration
-import { 
-  AutoGenIntegration,
-  useAutoGenStream,
-  useAutoGenEvents,
-  createAutoGenConfig,
-  autogenMultiAgentEvents,
-} from 'react-tracescope/integrations/autogen';
-
-// Dify Integration  
-import { 
-  DifyIntegration,
-  useDifyStream,
-  useDifyEvents,
-  createDifyConfig,
-  difyCustomerServiceEvents,
-} from 'react-tracescope/integrations/dify';
+```json
+{"type": "start", "message": "Agent started"}
+{"type": "thinking", "message": "Analyzing request..."}
+{"type": "tool_call", "tool": "read_file", "args": {"path": "src/index.ts"}}
+{"type": "tool_result", "result": "file content..."}
+{"type": "message", "message": "Here's what I found..."}
+{"type": "end", "message": "Done"}
 ```
 
-**Quick Start with Integration:**
+### Event Types
+
+| Type | Description | Fields |
+|------|-------------|--------|
+| `start` | Agent started | `message` |
+| `thinking` | Agent thinking | `message` |
+| `tool_call` | Tool invocation | `tool`, `args` |
+| `tool_result` | Tool result | `result` |
+| `message` | Text message | `message` |
+| `error` | Error occurred | `message` |
+| `end` | Agent finished | `message` |
+
+## Example: LangGraph Integration
+
+```python
+# Python (FastAPI)
+from fastapi import FastAPI
+from fastapi.responses import StreamingResponse
+
+app = FastAPI()
+
+@app.get("/agent/stream")
+async def agent_stream():
+    async def generate():
+        yield f'data: {{"type": "start", "message": "Agent started"}}\n\n'
+        
+        yield f'data: {{"type": "thinking", "message": "Analyzing..."}}\n\n'
+        
+        yield f'data: {{"type": "tool_call", "tool": "read_file", "args": {{"path": "test.py"}}}}\n\n'
+        
+        result = read_file("test.py")
+        yield f'data: {{"type": "tool_result", "result": "{result}"}}\n\n'
+        
+        yield f'data: {{"type": "end", "message": "Done"}}\n\n'
+    
+    return StreamingResponse(generate(), media_type="text/event-stream")
+```
 
 ```tsx
-import { TraceScopeProvider, TraceTree } from 'react-tracescope';
-import { useLangChainStream, langchainAgentEvents } from 'react-tracescope/integrations/langchain';
+// React
+import { AgentFlow } from 'agent-sse-flow'
+import 'agent-sse-flow/style.css'
 
 function App() {
-  // Option 1: Use hooks for live data
-  const { events, status } = useLangChainStream({
-    traceUrl: 'http://localhost:8000/trace/stream',
-    autoConnect: true,
-  });
-
   return (
-    <TraceScopeProvider
-      config={{ adapter: 'custom', autoConnect: false }}
-      initialEvents={events.length > 0 ? events : langchainAgentEvents}
-    >
-      <TraceTree />
-    </TraceScopeProvider>
-  );
+    <div style={{ height: '100vh' }}>
+      <AgentFlow 
+        url="http://localhost:8000/agent/stream"
+        theme="dark"
+      />
+    </div>
+  )
 }
 ```
 
-**Presets Available:**
+## Features
 
-| Framework | Preset | Description |
-|-----------|--------|-------------|
-| LangChain | `local` | localhost:8000 |
-| LangChain | `langsmith` | LangSmith cloud |
-| AutoGen | `local` | localhost:8081 |
-| Dify | `cloud` | Dify Cloud API |
-| Dify | `selfHosted` | Self-hosted Dify |
+- ✅ **SSE Streaming** - Real-time event visualization
+- ✅ **Dark/Light Theme** - Built-in themes
+- ✅ **Connection Status** - Visual status indicator
+- ✅ **Error Handling** - Graceful error display
+- ✅ **TypeScript** - Full type support
+- ✅ **Zero Dependencies** - Only React peer dependency
 
-### Examples - Ready-to-Use Demo Data
+## Comparison
 
-TraceScope provides built-in example data for each framework:
+| Feature | agent-sse-flow | LangSmith |
+|---------|---------------|-----------|
+| Price | Free | Free tier limited |
+| Trace limit | Unlimited | 5000/month |
+| Data location | Local | Cloud |
+| Setup | 5 minutes | Account required |
+| Dependencies | React only | LangChain ecosystem |
 
-```tsx
-import { TraceScopeProvider, TraceTree } from 'react-tracescope';
-import { langchainAgentTrace, langchainAgentEvents } from 'react-tracescope';
-
-// Use with adapter (for real-time SSE stream)
-function App1() {
-  return (
-    <TraceScopeProvider config={{ adapter: 'langchain' }}>
-      <TraceTree />
-    </TraceScopeProvider>
-  );
-}
-
-// Use with demo data (static)
-function App2() {
-  return (
-    <TraceScopeProvider
-      config={{ adapter: 'custom', autoConnect: false }}
-      initialEvents={langchainAgentEvents}
-    >
-      <TraceTree />
-    </TraceScopeProvider>
-  );
-}
-```
-
-**Available Examples:**
-
-| Framework | Import | Description |
-|-----------|--------|-------------|
-| LangChain | `langchainAgentTrace` | Full Agent flow with LLM + Tool |
-| AutoGen | `autogenMultiAgentTrace` | Multi-agent collaboration |
-| Dify | `difyCustomerServiceWorkflow` | Customer service workflow |
-
-### Installation
-
-```bash
-npm install react-tracescope
-# or
-pnpm add react-tracescope
-```
-
-### Development
-
-```bash
-# Install dependencies
-npm install
-
-# Start dev server
-npm run dev
-
-# Start Mock SSE server
-npm run mock-server
-
-# Build
-npm run build
-```
-
-### License
+## License
 
 MIT © 2024
+
+## Links
+
+- [GitHub](https://github.com/afine907/react-tracescope)
+- [NPM](https://www.npmjs.com/package/agent-sse-flow)
+- [Issues](https://github.com/afine907/react-tracescope/issues)
