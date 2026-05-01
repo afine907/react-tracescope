@@ -1,38 +1,34 @@
 /**
  * TraceScope Demo Application
- * 
- * 展示 TraceScope 核心功能的 Demo 页面
+ * Premium Architecture Design
  */
 
-import React, { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo } from 'react';
+import {
+  User,
+  Zap,
+  Wrench,
+  Code,
+  Terminal,
+  CheckCircle,
+  AlertCircle,
+} from 'lucide-react';
 
-// 导入组件
-import { 
-  VirtualTreeWithSearch,
-  ConnectionStatus,
-  VirtualChat
-} from '../../components';
+// Components
+import { VirtualTreeWithSearch, ConnectionStatus, VirtualChat } from '../../components';
+import { TimelineMarker, JsonBlock, PatchBlock } from '../../components/primitives';
 
-// 导入类型
-import type { 
-  ProtocolEvent, 
-  ProtocolMessageData 
-} from '../../protocol/types';
+// Types
+import type { ProtocolEvent, ProtocolMessageData } from '../../protocol/types';
 import type { TreeNode } from '../../types/tree';
 
-// 导入适配器
-import { getAdapter } from '../../protocol/adapters';
-
-// 样式
+// Styles
 import '../../styles/demo.css';
 
 // ============================================
-// Mock 数据集
+// Mock Data
 // ============================================
 
-/**
- * LangChain 风格示例数据
- */
 const langchainDemoData: ProtocolEvent[] = [
   {
     id: 'session-start',
@@ -154,102 +150,6 @@ const langchainDemoData: ProtocolEvent[] = [
   },
 ];
 
-/**
- * AutoGen 风格示例数据
- */
-const autogenDemoData: ProtocolEvent[] = [
-  {
-    id: 'autogen-session',
-    type: 'status',
-    action: 'start',
-    timestamp: Date.now() - 15000,
-    status: {
-      sessionId: 'autogen-demo',
-      status: 'running',
-      completedNodes: 0,
-      totalNodes: 4,
-    },
-  },
-  {
-    id: 'agent-user',
-    type: 'node',
-    action: 'start',
-    timestamp: Date.now() - 14000,
-    data: {
-      nodeId: 'user',
-      nodeType: 'user',
-      name: 'User',
-      status: 'completed',
-      input: '帮我写一个 Python 脚本来自动化处理 Excel 文件',
-    },
-  },
-  {
-    id: 'agent-assistant',
-    type: 'node',
-    action: 'start',
-    timestamp: Date.now() - 13000,
-    data: {
-      nodeId: 'assistant',
-      parentId: 'user',
-      nodeType: 'llm',
-      name: 'Assistant Agent',
-      status: 'running',
-      input: '用户请求：帮我写一个 Python 脚本来自动化处理 Excel 文件',
-      model: 'gpt-4',
-    },
-  },
-  {
-    id: 'tool-python',
-    type: 'node',
-    action: 'start',
-    timestamp: Date.now() - 10000,
-    data: {
-      nodeId: 'python-exec',
-      parentId: 'assistant',
-      nodeType: 'function',
-      name: 'Python Executor',
-      status: 'running',
-      toolName: 'python',
-      toolParams: { code: 'import pandas as pd\n...\nprint("完成")' },
-    },
-  },
-  {
-    id: 'tool-python-result',
-    type: 'node',
-    action: 'complete',
-    timestamp: Date.now() - 5000,
-    data: {
-      nodeId: 'python-exec',
-      parentId: 'assistant',
-      nodeType: 'function',
-      name: 'Python Executor',
-      status: 'completed',
-      output: '处理完成\n\n处理的记录数: 1000\n输出文件: output.xlsx',
-      endTime: Date.now() - 5000,
-    },
-  },
-  {
-    id: 'agent-assistant-complete',
-    type: 'node',
-    action: 'complete',
-    timestamp: Date.now(),
-    data: {
-      nodeId: 'assistant',
-      parentId: 'user',
-      nodeType: 'llm',
-      name: 'Assistant Agent',
-      status: 'completed',
-      output: '我已经为你编写了一个 Python 脚本...',
-      model: 'gpt-4',
-      tokenUsage: { input: 200, output: 100, total: 300 },
-      endTime: Date.now(),
-    },
-  },
-];
-
-/**
- * Chat 示例数据
- */
 const chatDemoMessages: ProtocolMessageData[] = [
   {
     messageId: 'msg-1',
@@ -261,45 +161,96 @@ const chatDemoMessages: ProtocolMessageData[] = [
   {
     messageId: 'msg-2',
     role: 'assistant',
-    content: '<thinking>\n用户想了解什么是 Agent。\n</thinking>\n\nAgent（智能体）是一种能够自主感知环境、规划行动、执行任务的 AI 系统。\n\n与传统的问答式 AI 不同，Agent 具有以下特点：\n\n1. **自主规划** - 能够分解复杂任务\n2. **工具使用** - 可以调用外部工具\n3. **持续交互** - 能够进行多轮对话',
+    content:
+      '<thinking>\n用户想了解什么是 Agent。\n</thinking>\n\nAgent（智能体）是一种能够自主感知环境、规划行动、执行任务的 AI 系统。',
     contentType: 'markdown',
     createdAt: Date.now() - 55000,
     tokensReceived: 250,
   },
-  {
-    messageId: 'msg-3',
-    role: 'user',
-    content: '那 Agent 是怎么工作的？',
-    contentType: 'text',
-    createdAt: Date.now() - 30000,
-  },
-  {
-    messageId: 'msg-4',
-    role: 'assistant',
-    content: 'Agent 的工作流程通常包括：\n\n1. 接收请求\n2. 理解意图\n3. 规划步骤\n4. 执行行动\n5. 评估结果\n\n需要我详细解释某个环节吗？',
-    contentType: 'markdown',
-    createdAt: Date.now() - 25000,
-    tokensReceived: 180,
-  },
 ];
 
 // ============================================
-// 主组件: Demo App
+// Component Showcase
+// ============================================
+
+function ComponentShowcase() {
+  return (
+    <div className="space-y-8">
+      {/* Timeline Markers */}
+      <section>
+        <h3 className="text-[10px] uppercase tracking-[5px] font-bold text-[#c5a059] mb-4">Timeline Markers</h3>
+        <div className="flex flex-wrap gap-6">
+          <div className="flex items-center gap-3">
+            <TimelineMarker type="dot" />
+            <span className="text-white/60 text-sm">Dot</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TimelineMarker type="pulse" />
+            <span className="text-white/60 text-sm">Pulse</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TimelineMarker type="success" />
+            <span className="text-white/60 text-sm">Success</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TimelineMarker type="error" />
+            <span className="text-white/60 text-sm">Error</span>
+          </div>
+          <div className="flex items-center gap-3">
+            <TimelineMarker icon={<User className="w-4 h-4" />} />
+            <span className="text-white/60 text-sm">With Icon</span>
+          </div>
+        </div>
+      </section>
+
+      {/* JSON Block */}
+      <section>
+        <h3 className="text-[10px] uppercase tracking-[5px] font-bold text-[#c5a059] mb-4">JSON Block</h3>
+        <JsonBlock
+          content={`{
+  "status": "success",
+  "matches": [
+    {"line": 42, "content": "async function validateToken(t) {"},
+    {"line": 89, "content": "const isValid = await validateToken(req.header);"}
+  ],
+  "path": "/volumes/app/src/middleware/auth-middleware.ts"
+}`}
+        />
+      </section>
+
+      {/* Patch Block */}
+      <section>
+        <h3 className="text-[10px] uppercase tracking-[5px] font-bold text-[#c5a059] mb-4">Patch Block</h3>
+        <PatchBlock
+          before={['if (await validateToken(token)) return next();']}
+          after={[
+            'const cached = cache.get(token);',
+            'if (cached) return next();',
+            'const valid = await validateToken(token);',
+            'cache.set(token, valid);',
+            'return next();',
+          ]}
+        />
+      </section>
+    </div>
+  );
+}
+
+// ============================================
+// Main App
 // ============================================
 
 export default function DemoApp() {
-  const [activeTab, setActiveTab] = useState<'tree' | 'chat' | 'settings'>('tree');
-  const [selectedAdapter, setSelectedAdapter] = useState<string>('langchain');
+  const [activeTab, setActiveTab] = useState<'components' | 'tree' | 'chat'>('tree');
   const [treeData, setTreeData] = useState<ProtocolEvent[]>(langchainDemoData);
   const [chatMessages, setChatMessages] = useState<ProtocolMessageData[]>(chatDemoMessages);
-  
-  // 转换事件数据为树结构
+
+  // Convert events to tree structure
   const convertToTreeData = useCallback((events: ProtocolEvent[]): TreeNode[] => {
     const nodeMap = new Map<string, TreeNode>();
     const roots: TreeNode[] = [];
-    
-    // 第一遍：创建所有节点
-    events.forEach(event => {
+
+    events.forEach((event) => {
       if (event.type === 'node' && event.data) {
         const node: TreeNode = {
           nodeId: event.data.nodeId,
@@ -317,6 +268,8 @@ export default function DemoApp() {
             model: event.data.model,
             toolName: event.data.toolName,
             toolParams: event.data.toolParams,
+            createdAt: event.timestamp,
+            updatedAt: event.timestamp,
           } as any,
           children: [],
           depth: 0,
@@ -325,9 +278,8 @@ export default function DemoApp() {
         nodeMap.set(node.nodeId, node);
       }
     });
-    
-    // 第二遍：构建父子关系
-    events.forEach(event => {
+
+    events.forEach((event) => {
       if (event.type === 'node' && event.data) {
         const node = nodeMap.get(event.data.nodeId);
         if (node) {
@@ -340,41 +292,23 @@ export default function DemoApp() {
         }
       }
     });
-    
-    // 设置深度
+
     const setDepth = (nodes: TreeNode[], depth: number) => {
-      nodes.forEach(node => {
+      nodes.forEach((node) => {
         node.depth = depth;
         setDepth(node.children, depth + 1);
       });
     };
     setDepth(roots, 0);
-    
-    return roots.length > 0 ? roots : roots;
+
+    return roots;
   }, []);
-  
+
   const tree = useMemo(() => {
     const result = convertToTreeData(treeData);
-    // 取第一个根节点作为 tree prop
     return result.length > 0 ? result[0] : null;
   }, [treeData, convertToTreeData]);
-  
-  // 切换适配器时更新示例数据
-  const handleAdapterChange = useCallback((adapter: string) => {
-    setSelectedAdapter(adapter);
-    switch (adapter) {
-      case 'langchain':
-        setTreeData(langchainDemoData);
-        break;
-      case 'autogen':
-        setTreeData(autogenDemoData);
-        break;
-      default:
-        setTreeData(langchainDemoData);
-    }
-  }, []);
-  
-  // 模拟发送聊天消息
+
   const handleSendMessage = useCallback((content: string) => {
     const newUserMsg: ProtocolMessageData = {
       messageId: `msg-${Date.now()}-user`,
@@ -383,10 +317,8 @@ export default function DemoApp() {
       contentType: 'text',
       createdAt: Date.now(),
     };
-    
-    setChatMessages(prev => [...prev, newUserMsg]);
-    
-    // 模拟 AI 回复
+    setChatMessages((prev) => [...prev, newUserMsg]);
+
     setTimeout(() => {
       const aiResponse: ProtocolMessageData = {
         messageId: `msg-${Date.now()}-ai`,
@@ -396,94 +328,75 @@ export default function DemoApp() {
         createdAt: Date.now(),
         tokensReceived: Math.floor(Math.random() * 100) + 20,
       };
-      
-      setChatMessages(prev => [...prev, aiResponse]);
+      setChatMessages((prev) => [...prev, aiResponse]);
     }, 1000);
   }, []);
-  
-  // 统计数据
+
   const stats = useMemo(() => {
     const totalTokens = treeData
-      .filter(e => e.data?.tokenUsage?.total)
+      .filter((e) => e.data?.tokenUsage?.total)
       .reduce((sum, e) => sum + (e.data?.tokenUsage?.total || 0), 0);
-    
-    const completedNodes = treeData.filter(e => e.action === 'complete').length;
-    const totalNodes = treeData.filter(e => e.type === 'node').length;
-    
+    const completedNodes = treeData.filter((e) => e.action === 'complete').length;
+    const totalNodes = treeData.filter((e) => e.type === 'node').length;
     return { totalTokens, completedNodes, totalNodes };
   }, [treeData]);
-  
+
   return (
-    <div className="demo-app">
+    <div className="min-h-screen bg-[#0a0a0a]">
       {/* Header */}
-      <header className="demo-header">
-        <h1>🤖 TraceScope Demo</h1>
-        <p>Agent Trace 可视化标准方案</p>
+      <header className="border-b border-white/10 px-6 py-4">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-[10px] uppercase tracking-[5px] font-bold text-[#c5a059] mb-1">TraceScope</h1>
+            <p className="text-sm text-white/40">Premium Architecture Design</p>
+          </div>
+          <div className="flex items-center gap-4 text-sm text-white/40 font-mono">
+            <span>节点: {stats.totalNodes}</span>
+            <span>Token: {stats.totalTokens}</span>
+            <ConnectionStatus state="connected" />
+          </div>
+        </div>
       </header>
-      
-      {/* Tab 导航 */}
-      <nav className="demo-tabs" role="tablist" aria-label="Demo navigation">
-        <button
-          id="tree-tab"
-          className={`tab ${activeTab === 'tree' ? 'active' : ''}`}
-          onClick={() => setActiveTab('tree')}
-          role="tab"
-          aria-selected={activeTab === 'tree'}
-          aria-controls="tree-panel"
-          tabIndex={activeTab === 'tree' ? 0 : -1}
-        >
-          <span aria-hidden="true">🌳</span> Tree View
-        </button>
-        <button
-          id="chat-tab"
-          className={`tab ${activeTab === 'chat' ? 'active' : ''}`}
-          onClick={() => setActiveTab('chat')}
-          role="tab"
-          aria-selected={activeTab === 'chat'}
-          aria-controls="chat-panel"
-          tabIndex={activeTab === 'chat' ? 0 : -1}
-        >
-          <span aria-hidden="true">💬</span> Chat Mode
-        </button>
-        <button
-          id="settings-tab"
-          className={`tab ${activeTab === 'settings' ? 'active' : ''}`}
-          onClick={() => setActiveTab('settings')}
-          role="tab"
-          aria-selected={activeTab === 'settings'}
-          aria-controls="settings-panel"
-          tabIndex={activeTab === 'settings' ? 0 : -1}
-        >
-          <span aria-hidden="true">⚙️</span> Settings
-        </button>
+
+      {/* Tab Navigation */}
+      <nav className="border-b border-white/10 px-6">
+        <div className="flex gap-1">
+          {[
+            { id: 'components', label: 'Components' },
+            { id: 'tree', label: 'Tree View' },
+            { id: 'chat', label: 'Chat Mode' },
+          ].map(({ id, label }) => (
+            <button
+              key={id}
+              className={`px-4 py-3 text-[10px] uppercase tracking-[3px] font-bold transition-colors ${
+                activeTab === id
+                  ? 'text-[#c5a059] border-b-2 border-[#c5a059]'
+                  : 'text-white/40 hover:text-white/60'
+              }`}
+              onClick={() => setActiveTab(id as any)}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </nav>
-      
-      {/* 主内容区域 */}
-      <main className="demo-content">
-        {/* Tree View */}
-        {activeTab === 'tree' && (
-          <div className="tree-view" role="tabpanel" id="tree-panel" aria-labelledby="tree-tab">
-            <div className="tree-info">
-              <span>适配器: <strong>{selectedAdapter}</strong></span>
-              <span>节点: {stats.totalNodes}</span>
-              <span>已完成: {stats.completedNodes}</span>
-              <span>Token: {stats.totalTokens}</span>
-            </div>
-            
-            <div className="tree-container">
-              <VirtualTreeWithSearch
-                tree={tree}
-                height={500}
-                showSearch={true}
-                showTypeFilter={true}
-              />
-            </div>
+
+      {/* Main Content */}
+      <main className="p-6">
+        {activeTab === 'components' && (
+          <div className="max-w-4xl mx-auto">
+            <ComponentShowcase />
           </div>
         )}
-        
-        {/* Chat View */}
+
+        {activeTab === 'tree' && (
+          <div className="max-w-4xl mx-auto">
+            <VirtualTreeWithSearch tree={tree} height={600} showSearch={true} showTypeFilter={true} />
+          </div>
+        )}
+
         {activeTab === 'chat' && (
-          <div className="chat-view" role="tabpanel" id="chat-panel" aria-labelledby="chat-tab">
+          <div className="max-w-4xl mx-auto">
             <VirtualChat
               messages={chatMessages}
               config={{
@@ -492,89 +405,11 @@ export default function DemoApp() {
                 showTimestamp: true,
                 onSendMessage: handleSendMessage,
               }}
-              height={500}
+              height={600}
             />
           </div>
         )}
-        
-        {/* Settings */}
-        {activeTab === 'settings' && (
-          <div className="settings-view" role="tabpanel" id="settings-panel" aria-labelledby="settings-tab">
-            <h2>适配器设置</h2>
-
-            <div className="setting-group">
-              <label htmlFor="adapter-select">选择适配器:</label>
-              <select
-                id="adapter-select"
-                value={selectedAdapter}
-                onChange={(e) => handleAdapterChange(e.target.value)}
-                aria-label="Select adapter type"
-              >
-                <option value="custom">Custom (自定义)</option>
-                <option value="langchain">LangChain</option>
-                <option value="autogen">AutoGen</option>
-                <option value="dify">Dify</option>
-              </select>
-            </div>
-            
-            <div className="setting-group">
-              <label>当前适配器信息:</label>
-              <div className="adapter-info">
-                {(() => {
-                  const adapter = getAdapter(selectedAdapter);
-                  return adapter ? (
-                    <>
-                      <p>名称: {adapter.name}</p>
-                      <p>版本: {adapter.version}</p>
-                    </>
-                  ) : (
-                    <p>未找到适配器</p>
-                  );
-                })()}
-              </div>
-            </div>
-            
-            <h3>示例数据</h3>
-            <div className="sample-buttons">
-              <button type="button" onClick={() => handleAdapterChange('langchain')}>
-                加载 LangChain 示例
-              </button>
-              <button type="button" onClick={() => handleAdapterChange('autogen')}>
-                加载 AutoGen 示例
-              </button>
-            </div>
-            
-            <h3>性能指标</h3>
-            <div className="perf-metrics">
-              <div className="metric">
-                <span className="label">节点数</span>
-                <span className="value">{stats.totalNodes}</span>
-              </div>
-              <div className="metric">
-                <span className="label">已完成</span>
-                <span className="value">{stats.completedNodes}</span>
-              </div>
-              <div className="metric">
-                <span className="label">Token 消耗</span>
-                <span className="value">{stats.totalTokens}</span>
-              </div>
-            </div>
-          </div>
-        )}
       </main>
-      
-      {/* Footer */}
-      <footer className="demo-footer">
-        <ConnectionStatus 
-          state="connected" 
-          
-        />
-        <span>•</span>
-        <span>节点: {stats.totalNodes}</span>
-        <span>•</span>
-        <span>Token: {stats.totalTokens}</span>
-        <span className="version">v1.0.0</span>
-      </footer>
     </div>
   );
 }

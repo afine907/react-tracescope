@@ -15,4 +15,4 @@ export * from './state/immutable';
 export { TreeBuilder, createTreeBuilder } from './tree';
 
 // Renderer
-export { Renderer, createRenderer, createRenderEvent } from './renderer';
+export { Renderer } from './renderer';

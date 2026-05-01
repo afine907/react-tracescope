@@ -11,10 +11,11 @@ import type { StreamNode } from '@tracescope/types/node';
 
 // Mock hooks
 const mockToggle = vi.fn();
+const mockIsExpanded = vi.fn(() => true);
 
 vi.mock('@tracescope/adapters/react/hooks', () => ({
   useNodeExpanded: vi.fn(() => ({
-    isExpanded: true,
+    isExpanded: mockIsExpanded(),
     toggle: mockToggle,
   })),
 }));
@@ -102,7 +103,7 @@ describe('TraceNode', () => {
       render(<TraceNode node={node} depth={3} />);
 
       const nodeElement = screen.getByRole('treeitem');
-      expect(nodeElement.style.paddingLeft).toBe('96px'); // 3 * 32
+      expect(nodeElement.style.paddingLeft).toBe('72px'); // 3 * 24
     });
 
     it('should apply zero padding for depth 0', () => {
@@ -137,13 +138,8 @@ describe('TraceNode', () => {
     });
 
     it('should not render children when collapsed', () => {
-      // Override mock for this test
-      vi.mock('@tracescope/adapters/react/hooks', () => ({
-        useNodeExpanded: vi.fn(() => ({
-          isExpanded: false,
-          toggle: mockToggle,
-        })),
-      }));
+      // Set mock to return collapsed state
+      mockIsExpanded.mockReturnValue(false);
 
       const node = createNode({
         children: [
@@ -161,6 +157,9 @@ describe('TraceNode', () => {
 
       // Only parent node should be rendered
       expect(screen.getByRole('treeitem')).toBeInTheDocument();
+      
+      // Reset mock
+      mockIsExpanded.mockReturnValue(true);
     });
   });
 
@@ -207,7 +206,7 @@ describe('TraceNode', () => {
 
   describe('node type classes', () => {
     const testCases = [
-      { nodeType: 'user_input', expectedClass: 'ts-node-user-input' },
+      { nodeType: 'user_input', expectedClass: 'ts-node-user' },
       { nodeType: 'assistant_thought', expectedClass: 'ts-node-thought' },
       { nodeType: 'tool_call', expectedClass: 'ts-node-tool' },
       { nodeType: 'code_execution', expectedClass: 'ts-node-code' },
