@@ -165,11 +165,17 @@
    Events Container
    ============================================= */
 
-.agent-flow__events {
+.agent-flow__events-wrapper {
   flex: 1;
+  position: relative;
+  overflow: hidden;
+  min-height: 0;
+}
+
+.agent-flow__events {
+  height: 100%;
   overflow-y: auto;
   padding: 12px;
-  position: relative;
   scrollbar-gutter: stable;
 }
 
@@ -505,9 +511,6 @@
 }
 
 .agent-flow__copy-btn {
-  position: absolute;
-  top: 6px;
-  right: 6px;
   padding: 4px;
   border: none;
   border-radius: 4px;
@@ -531,18 +534,63 @@
   background: var(--af-border-subtle);
 }
 
-.agent-flow--dark .agent-flow__tool-args,
-.agent-flow--dark .agent-flow__event-result {
+/* Tool args: copy button stays absolute inside pre */
+.agent-flow__tool-args .agent-flow__copy-btn {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+}
+
+.agent-flow--dark .agent-flow__tool-args {
   position: relative;
   background: var(--af-bg);
   color: #a5b4fc;
 }
 
-.agent-flow--light .agent-flow__tool-args,
-.agent-flow--light .agent-flow__event-result {
+.agent-flow--light .agent-flow__tool-args {
   position: relative;
   background: var(--af-bg-raised);
   color: #374151;
+}
+
+/* Result section: actions bar + content side by side */
+.agent-flow__event-result {
+  position: relative;
+  margin-top: 6px;
+  border-radius: var(--af-radius-sm);
+  overflow: hidden;
+}
+
+.agent-flow--dark .agent-flow__event-result {
+  background: var(--af-bg);
+  color: #a5b4fc;
+}
+
+.agent-flow--light .agent-flow__event-result {
+  background: var(--af-bg-raised);
+  color: #374151;
+}
+
+.agent-flow__event-result-actions {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1;
+  padding: 6px;
+  display: flex;
+}
+
+.agent-flow__event-result-content {
+  padding: 8px 10px;
+  padding-right: 36px;
+}
+
+.agent-flow__event-result .agent-flow__copy-btn {
+  opacity: 0;
+}
+
+.agent-flow__event-result:hover .agent-flow__copy-btn {
+  opacity: 0.6;
 }
 
 /* =============================================

@@ -140,54 +140,56 @@ export function AgentFlow({
       </div>
 
       {/* Events (virtualized) */}
-      <div ref={parentRef} className="agent-flow__events">
-        {filteredEvents.length === 0 ? (
-          <div className="agent-flow__empty">No events yet. Waiting for agent...</div>
-        ) : (
-          <div
-            className="agent-flow__events-viewport"
-            style={{ height: virtualizer.getTotalSize() }}
-          >
-            {virtualizer.getVirtualItems().map((virtualRow) => {
-              const event = filteredEvents[virtualRow.index];
-              return (
-                <div
-                  key={event.id}
-                  className="agent-flow__event-row"
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    transform: `translateY(${virtualRow.start}px)`,
-                  }}
-                  data-index={virtualRow.index}
-                  ref={virtualizer.measureElement}
-                >
-                  {viewMode === 'timeline' ? (
-                    <TimelineRow
-                      event={event}
-                      collapsed={collapsedIds.has(event.id)}
-                      onToggle={() => toggleCollapse(event.id)}
-                      showArgs={expandedArgsIds.has(event.id)}
-                      onToggleArgs={() => toggleArgs(event.id)}
-                      renderMessage={renderMessage}
-                      renderResult={renderResult}
-                    />
-                  ) : (
-                    <EventRow
-                      event={event}
-                      showArgs={expandedArgsIds.has(event.id)}
-                      onToggleArgs={() => toggleArgs(event.id)}
-                      renderMessage={renderMessage}
-                      renderResult={renderResult}
-                    />
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
+      <div className="agent-flow__events-wrapper">
+        <div ref={parentRef} className="agent-flow__events">
+          {filteredEvents.length === 0 ? (
+            <div className="agent-flow__empty">No events yet. Waiting for agent...</div>
+          ) : (
+            <div
+              className="agent-flow__events-viewport"
+              style={{ height: virtualizer.getTotalSize() }}
+            >
+              {virtualizer.getVirtualItems().map((virtualRow) => {
+                const event = filteredEvents[virtualRow.index];
+                return (
+                  <div
+                    key={event.id}
+                    className="agent-flow__event-row"
+                    style={{
+                      position: 'absolute',
+                      top: 0,
+                      left: 0,
+                      width: '100%',
+                      transform: `translateY(${virtualRow.start}px)`,
+                    }}
+                    data-index={virtualRow.index}
+                    ref={virtualizer.measureElement}
+                  >
+                    {viewMode === 'timeline' ? (
+                      <TimelineRow
+                        event={event}
+                        collapsed={collapsedIds.has(event.id)}
+                        onToggle={() => toggleCollapse(event.id)}
+                        showArgs={expandedArgsIds.has(event.id)}
+                        onToggleArgs={() => toggleArgs(event.id)}
+                        renderMessage={renderMessage}
+                        renderResult={renderResult}
+                      />
+                    ) : (
+                      <EventRow
+                        event={event}
+                        showArgs={expandedArgsIds.has(event.id)}
+                        onToggleArgs={() => toggleArgs(event.id)}
+                        renderMessage={renderMessage}
+                        renderResult={renderResult}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
         {showScrollBottom && filteredEvents.length > 0 && (
           <button className="agent-flow__scroll-bottom" onClick={scrollToBottom} title="Scroll to bottom">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
