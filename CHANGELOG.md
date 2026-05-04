@@ -33,7 +33,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 - Timeline view mode with collapsible events
-- Virtual scrolling for 10,000+ events
+- Virtual scrolling for 100,000+ events
 - Dark/Light theme support
 - Connection status indicator
 - Error handling with callbacks

@@ -16,7 +16,7 @@ const MOCK_EVENTS = [
   { type: 'thinking', message: 'Identifying performance bottleneck in event rendering...' },
   { type: 'tool_call', tool: 'run_tests', args: { suite: 'unit', coverage: true } },
   { type: 'tool_result', result: 'Tests: 19 passed, 0 failed\nCoverage: 87% statements' },
-  { type: 'message', message: '## Analysis Complete\n\nThe component uses **virtual scrolling** via `@tanstack/react-virtual` to handle 10K+ events efficiently.\n\nKey findings:\n- DOM nodes stay bounded at ~20 rows\n- rAF batching prevents excessive re-renders\n- Memory usage < 100MB at 10K events' },
+  { type: 'message', message: '## Analysis Complete\n\nThe component uses **virtual scrolling** via `@tanstack/react-virtual` to handle 100K+ events efficiently.\n\nKey findings:\n- DOM nodes stay bounded at ~20 rows\n- rAF batching prevents excessive re-renders\n- Incremental stats avoid O(n) scans\n- Memory usage < 200MB at 100K events' },
   { type: 'end', message: 'Task completed successfully' },
 ]
 
@@ -128,7 +128,7 @@ function Demo() {
         <div style={{ width: 240, display: 'flex', flexDirection: 'column', gap: 10, flexShrink: 0 }}>
           <div style={{ padding: 12, background: theme === 'dark' ? '#12121f' : '#fff', borderRadius: 8, border: `1px solid ${theme === 'dark' ? '#1a1a2e' : '#e5e7eb'}` }}>
             <label style={{ fontSize: 12, opacity: 0.6, display: 'block', marginBottom: 4, color: theme === 'dark' ? '#ccc' : '#333' }}>Event Count</label>
-            <input type="range" min={50} max={5000} step={50} value={eventCount} onChange={e => setEventCount(Number(e.target.value))} disabled={running} style={{ width: '100%' }} />
+            <input type="range" min={100} max={100000} step={100} value={eventCount} onChange={e => setEventCount(Number(e.target.value))} disabled={running} style={{ width: '100%' }} />
             <div style={{ textAlign: 'center', fontSize: 16, fontWeight: 600, marginTop: 4, color: theme === 'dark' ? '#eaeaea' : '#111' }}>{eventCount.toLocaleString()}</div>
           </div>
 
@@ -147,7 +147,7 @@ function Demo() {
           <div style={{ padding: 12, background: theme === 'dark' ? '#12121f' : '#fff', borderRadius: 8, border: `1px solid ${theme === 'dark' ? '#1a1a2e' : '#e5e7eb'}`, fontSize: 12, lineHeight: 1.6, color: theme === 'dark' ? '#aaa' : '#555' }}>
             <div style={{ fontWeight: 600, marginBottom: 6, color: theme === 'dark' ? '#eaeaea' : '#111' }}>Features</div>
             <ul style={{ paddingLeft: 16, margin: 0 }}>
-              <li>Virtual scrolling (10K+ nodes)</li>
+              <li>Virtual scrolling (100K+ nodes)</li>
               <li>rAF message batching</li>
               <li>Dark / Light themes</li>
               <li>Markdown rendering</li>
@@ -160,7 +160,7 @@ function Demo() {
             <pre style={{ fontSize: 11, overflow: 'auto', background: theme === 'dark' ? '#0a0a0f' : '#f3f4f6', padding: 8, borderRadius: 4, margin: 0, color: theme === 'dark' ? '#ccc' : '#333' }}>{`<AgentFlow
   url="/api/sse"
   theme="dark"
-  maxEvents={10000}
+  maxEvents={100000}
 />`}</pre>
           </div>
         </div>
@@ -168,7 +168,7 @@ function Demo() {
         {/* Component */}
         <div style={{ flex: 1, border: `1px solid ${theme === 'dark' ? '#1a1a2e' : '#e5e7eb'}`, borderRadius: 8, overflow: 'hidden', minHeight: 0 }}>
           {sseUrl ? (
-            <AgentFlow key={sseUrl} url={sseUrl} theme={theme} viewMode={viewMode} maxEvents={10_000} />
+            <AgentFlow key={sseUrl} url={sseUrl} theme={theme} viewMode={viewMode} maxEvents={100_000} />
           ) : (
             <div className={`agent-flow agent-flow--${theme}`} style={{ height: '100%' }}>
               <div className="agent-flow__header">
