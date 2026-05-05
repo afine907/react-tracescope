@@ -5,11 +5,13 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [2.2.0] - 2026-05-05
+## [2.3.0] - 2026-05-05
 
 ### Added
 - **100K node support** - Virtual scrolling now supports up to 100,000 events
 - **Incremental stats** - Cost and token tracking via useRef for O(1) updates at 100K+ events
+- **LangChain quickstart example** - Complete example showing integration with LangChain/LangGraph
+- **Event JSON Schema** - Formal schema documentation for the SSE event format
 
 ### Fixed
 - Timeline layout spacing and track line adjustments
@@ -23,12 +25,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - `AgentFlow.tsx` - Thin wrapper (~200 lines) for virtual scrolling
 - Default maxEvents increased from 10,000 to 100,000
 
+## [2.2.0] - 2026-05-04
+
+### Changed
+- Version bump for npm release
+
 ## [2.1.1] - 2026-05-04
 
 ### Changed
 - Quality improvements and performance optimization
 
 ### Fixed
+- Rebrand from TraceScope to agent-sse-flow
+- GitHub Pages auto-configuration
 - Test suite fixes (19/19 tests passing)
 - Pre-existing test failures
 
